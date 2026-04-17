@@ -1,0 +1,51 @@
+<view class="blackhole-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
+  <view class="presence-shell presence-shell--light">
+    <view class="presence-shell__glow presence-shell__glow--a"></view>
+    <view class="presence-shell__glow presence-shell__glow--b"></view>
+    <view class="presence-top-offset presence-top-offset--meet" style="height: {{statusBarHeight + 6}}px;"></view>
+
+    <nav-shell compact>
+      <view class="meet-banner">
+        <text class="meet-banner__eyebrow">MEET</text>
+        <text class="meet-banner__label">见面</text>
+      </view>
+      <view class="presence-page-head">
+        <text class="presence-page-head__copy">先看见不同的人，再决定你想和谁真正见一面。</text>
+      </view>
+    </nav-shell>
+
+    <scroll-view scroll-y class="presence-section-scroll">
+      <view class="meet-feed">
+        <view
+          wx:for="{{meetPeopleRows}}"
+          wx:key="id"
+          class="meet-row"
+        >
+          <view
+            wx:if="{{item.left}}"
+            class="meet-person-card meet-person-card--left meet-person-card--{{item.left.tone}} meet-person-card--offset-{{item.left.offset}}"
+            data-person-id="{{item.left.personId}}"
+            bindtap="openPerson"
+          >
+            <text class="meet-person-card__name">{{item.left.name}}</text>
+            <text class="meet-person-card__line">{{item.left.line}}</text>
+            <text class="meet-person-card__title">{{item.left.title}}</text>
+            <text class="meet-person-card__quote">{{item.left.quote}}</text>
+          </view>
+
+          <view
+            wx:if="{{item.right}}"
+            class="meet-person-card meet-person-card--right meet-person-card--{{item.right.tone}} meet-person-card--offset-{{item.right.offset}}"
+            data-person-id="{{item.right.personId}}"
+            bindtap="openPerson"
+          >
+            <text class="meet-person-card__name">{{item.right.name}}</text>
+            <text class="meet-person-card__line">{{item.right.line}}</text>
+            <text class="meet-person-card__title">{{item.right.title}}</text>
+            <text class="meet-person-card__quote">{{item.right.quote}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

@@ -1,0 +1,209 @@
+.person-page {
+  position: relative;
+}
+
+.person-nav {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 18rpx;
+}
+
+.person-nav__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 104rpx;
+  min-height: 56rpx;
+  padding: 0 18rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(243, 241, 231, 0.78);
+  font-size: 22rpx;
+}
+
+.person-hero {
+  position: relative;
+  overflow: hidden;
+  margin-top: 18rpx;
+  margin-bottom: 30rpx;
+  padding: 30rpx 28rpx 26rpx;
+  border-radius: 40rpx;
+  background:
+    radial-gradient(circle at 82% 16%, rgba(198, 213, 255, 0.2), transparent 22%),
+    radial-gradient(circle at 18% 78%, rgba(248, 224, 168, 0.16), transparent 22%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+}
+
+.person-hero__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(42rpx);
+}
+
+.person-hero__glow--a {
+  top: -28rpx;
+  right: 24rpx;
+  width: 200rpx;
+  height: 180rpx;
+  background: rgba(182, 198, 255, 0.2);
+}
+
+.person-hero__glow--b {
+  left: -24rpx;
+  bottom: -30rpx;
+  width: 180rpx;
+  height: 150rpx;
+  background: rgba(245, 214, 164, 0.12);
+}
+
+.person-avatar {
+  width: 136rpx;
+  height: 136rpx;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #707c82, #c6bbb2 55%, #c19a76);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.person-avatar__initial {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.person-name {
+  display: block;
+  margin-top: 24rpx;
+  font-size: 78rpx;
+  line-height: 0.95;
+  letter-spacing: -2rpx;
+  font-weight: 700;
+  color: #f3f1e7;
+  position: relative;
+  z-index: 1;
+}
+
+.person-bio-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-top: 18rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.person-bio-line {
+  color: rgba(243, 241, 231, 0.78);
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.person-tags {
+  display: flex;
+  gap: 12rpx;
+  flex-wrap: wrap;
+  margin-top: 18rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.person-tags .pill {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1rpx solid rgba(255, 255, 255, 0.14);
+  color: rgba(243, 241, 231, 0.88);
+}
+
+.person-status {
+  margin-top: 18rpx;
+}
+
+.person-status__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.person-status__eyebrow {
+  color: rgba(243, 241, 231, 0.34);
+  font-size: 18rpx;
+  letter-spacing: 1.6rpx;
+  text-transform: uppercase;
+}
+
+.person-status__title {
+  color: #f3f1e7;
+  font-size: 42rpx;
+  line-height: 1.08;
+  font-weight: 700;
+}
+
+.person-status__list {
+  display: grid;
+  gap: 16rpx;
+  margin-top: 18rpx;
+}
+
+.person-status__card {
+  padding: 24rpx 24rpx 22rpx;
+  border-radius: 28rpx;
+  box-shadow:
+    0 16rpx 36rpx rgba(0, 0, 0, 0.16),
+    inset 0 0 0 1rpx rgba(255, 255, 255, 0.14);
+}
+
+.person-status__card--0 {
+  background:
+    radial-gradient(circle at 82% 16%, rgba(245, 233, 183, 0.24), transparent 24%),
+    linear-gradient(145deg, rgba(146, 166, 178, 0.94), rgba(186, 168, 159, 0.92) 42%, rgba(216, 190, 151, 0.94) 100%);
+}
+
+.person-status__card--1 {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(244, 221, 197, 0.22), transparent 24%),
+    linear-gradient(145deg, rgba(217, 198, 182, 0.94), rgba(198, 208, 188, 0.92) 58%, rgba(228, 206, 186, 0.92));
+}
+
+.person-status__card--2 {
+  background:
+    radial-gradient(circle at 80% 16%, rgba(196, 218, 255, 0.22), transparent 24%),
+    linear-gradient(145deg, rgba(165, 182, 198, 0.94), rgba(197, 205, 218, 0.92) 52%, rgba(213, 191, 176, 0.92));
+}
+
+.person-status__card--3 {
+  background:
+    radial-gradient(circle at 18% 84%, rgba(245, 195, 208, 0.2), transparent 24%),
+    linear-gradient(145deg, rgba(214, 194, 202, 0.94), rgba(190, 177, 193, 0.92) 54%, rgba(222, 194, 182, 0.92));
+}
+
+.person-status__card--4 {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(250, 238, 210, 0.24), transparent 24%),
+    linear-gradient(145deg, rgba(210, 206, 194, 0.94), rgba(181, 188, 198, 0.92) 56%, rgba(214, 198, 176, 0.92));
+}
+
+.person-status__card-title {
+  display: block;
+  color: #111111;
+  font-size: 34rpx;
+  line-height: 1.22;
+  font-weight: 700;
+}
+
+.person-status__card-copy {
+  display: block;
+  margin-top: 12rpx;
+  color: rgba(17, 17, 17, 0.68);
+  font-size: 22rpx;
+  line-height: 1.6;
+}
+
+.person-status__card-meta {
+  display: block;
+  margin-top: 14rpx;
+  color: rgba(17, 17, 17, 0.5);
+  font-size: 18rpx;
+}

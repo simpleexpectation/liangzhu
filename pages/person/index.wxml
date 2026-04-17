@@ -1,0 +1,37 @@
+<view class="page-shell person-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
+  <nav-shell eyebrow="Profile" title="{{person.name}}">
+    <view class="person-nav">
+      <view class="person-nav__back" bindtap="goBack">返回</view>
+    </view>
+  </nav-shell>
+
+  <view class="person-hero">
+    <view class="person-hero__glow person-hero__glow--a"></view>
+    <view class="person-hero__glow person-hero__glow--b"></view>
+    <view class="person-avatar">
+      <text class="person-avatar__initial">{{person.initial}}</text>
+    </view>
+    <text class="person-name">{{person.name}}</text>
+    <view class="person-bio-lines">
+      <text class="person-bio-line">◈  {{person.bio}}</text>
+      <text class="person-bio-line">⌖  {{person.location}}</text>
+    </view>
+    <view class="person-tags">
+      <view wx:for="{{person.tags}}" wx:key="index" class="pill">{{item}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{statusCards.length}}" class="person-status">
+    <view class="person-status__head">
+      <text class="person-status__eyebrow">STATUS CARDS</text>
+      <text class="person-status__title">状态卡片</text>
+    </view>
+    <view class="person-status__list">
+      <view wx:for="{{statusCards}}" wx:key="id" class="person-status__card person-status__card--{{item.tone}}">
+        <text class="person-status__card-title">{{item.title}}</text>
+        <text class="person-status__card-copy">{{item.quote}}</text>
+        <text class="person-status__card-meta">{{item.createdAt}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,52 @@
+{
+  "pages": [
+    "pages/card/index",
+    "pages/meet/index",
+    "pages/ai-entry/index",
+    "pages/conversation-starter/index",
+    "pages/direct-launch/index",
+    "pages/event-detail/index",
+    "pages/topic-detail/index",
+    "pages/venue-detail/index",
+    "pages/membership/index",
+    "pages/access-center/index",
+    "pages/invite-friends/index",
+    "pages/blackhole/index",
+    "pages/presence-room/index",
+    "pages/person/index",
+    "pages/profile/index"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#050505",
+    "backgroundTextStyle": "light"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "tabBar": {
+    "custom": true,
+    "color": "#6C6C70",
+    "selectedColor": "#F2F1EA",
+    "backgroundColor": "#050505",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/card/index",
+        "text": "今晚"
+      },
+      {
+        "pagePath": "pages/blackhole/index",
+        "text": "良渚"
+      },
+      {
+        "pagePath": "pages/meet/index",
+        "text": "见面"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

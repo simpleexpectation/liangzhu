@@ -1,0 +1,68 @@
+<view class="page-shell membership-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
+  <nav-shell eyebrow="Membership">
+    <view class="membership-topbar">
+      <view class="membership-topbar__back" bindtap="goBack">‹</view>
+      <text class="membership-topbar__title">会员权益</text>
+    </view>
+  </nav-shell>
+
+  <view class="membership-hero">
+    <text class="membership-hero__eyebrow">Membership options</text>
+    <text class="membership-hero__plan">先给第一次进入的人一个更轻的选择</text>
+    <text class="membership-hero__intro">除了月卡，我们新增了 49 元周卡。先试一周，再决定要不要持续进入。</text>
+  </view>
+
+  <view class="membership-plan-grid">
+    <view
+      wx:for="{{planOptions}}"
+      wx:key="key"
+      class="membership-plan-card {{selectedPlanKey === item.key ? 'membership-plan-card--active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="selectPlan"
+    >
+      <text class="membership-plan-card__badge">{{item.badge}}</text>
+      <text class="membership-plan-card__title">{{item.plan}}</text>
+      <view class="membership-plan-card__price-row">
+        <text class="membership-plan-card__currency">¥</text>
+        <text class="membership-plan-card__price">{{item.price}}</text>
+        <text class="membership-plan-card__billing">{{item.billing}}</text>
+      </view>
+      <text class="membership-plan-card__renewal">{{item.renewal}}</text>
+    </view>
+  </view>
+
+  <view class="membership-actions">
+    <view class="membership-hero__price-row">
+      <text class="membership-hero__currency">¥</text>
+      <text class="membership-hero__price">{{activePlan.price}}</text>
+      <text class="membership-hero__billing">{{activePlan.billing}}</text>
+    </view>
+    <text class="membership-hero__renewal">{{activePlan.renewal}}</text>
+    <view class="purchase-button" bindtap="startMembershipPurchase">
+      <text class="purchase-button__price">{{activePlan.cta}}</text>
+    </view>
+    <view class="invite-entry-button" bindtap="startInviteUnlock">
+      <text class="invite-entry-button__text">邀请好友免费获得 →</text>
+    </view>
+  </view>
+
+  <view class="invite-panel">
+    <view class="invite-panel__quota-badge">{{limitedQuota.remaining}}/{{limitedQuota.total}}</view>
+    <text class="invite-panel__eyebrow">Invite to unlock</text>
+    <text class="invite-panel__title">邀请 2 位好友后，直接跳过这次 99 元付费</text>
+    <text class="invite-panel__description">{{inviteProgram.description}}</text>
+  </view>
+
+  <view class="membership-perks-head">{{selectedPlanKey === 'week' ? '周卡权益' : '月卡权益'}}</view>
+  <view class="membership-list">
+    <view wx:for="{{activePlan.perks}}" wx:key="*this" class="membership-item">
+      <text>{{item}}</text>
+    </view>
+  </view>
+
+  <view class="membership-footer">
+    <view class="purchase-button" bindtap="startMembershipPurchase">
+      <text class="purchase-button__price">{{activePlan.cta}}</text>
+    </view>
+  </view>
+</view>

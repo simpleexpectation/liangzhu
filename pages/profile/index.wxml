@@ -1,0 +1,157 @@
+<view class="page-shell profile-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
+  <nav-shell compact>
+    <view class="profile-banner">
+      <text class="profile-banner__eyebrow">计划良渚</text>
+      <text class="profile-banner__title">我的</text>
+    </view>
+    <view class="profile-switch">
+      <view class="profile-switch__item {{activeTab === 'saved' ? 'profile-switch__item--active' : ''}}" data-tab="saved" bindtap="switchTab">
+        <text class="profile-switch__eyebrow">Saved</text>
+        <text class="profile-switch__label">好的</text>
+      </view>
+      <view class="profile-switch__item {{activeTab === 'launch' ? 'profile-switch__item--active' : ''}}" data-tab="launch" bindtap="switchTab">
+        <text class="profile-switch__eyebrow">Launch</text>
+        <text class="profile-switch__label">发起</text>
+      </view>
+    </view>
+  </nav-shell>
+
+  <block wx:if="{{activeTab === 'saved'}}">
+  <view class="profile-hero">
+    <view class="profile-avatar">
+      <text class="profile-avatar__initial">{{user.initial}}</text>
+    </view>
+    <view class="profile-heading">
+      <text class="profile-name">{{user.name}}</text>
+      <view class="profile-edit {{pressedProfileAction === 'edit' ? 'profile-edit--pressed' : ''}}" data-action="edit" bindtouchstart="pressProfileAction" bindtouchend="releaseProfileAction" bindtouchcancel="releaseProfileAction" bindtap="editProfile">
+        编辑资料
+      </view>
+    </view>
+    <view class="profile-bio-lines">
+      <text class="profile-bio-line">◈  {{user.bio}}</text>
+      <text class="profile-bio-line">⌖  {{user.location}}</text>
+    </view>
+    <view class="profile-tags">
+      <view wx:for="{{user.tags}}" wx:key="index" class="pill">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="event-head">
+    <view>
+      <text class="event-head__eyebrow">MY IDEAS</text>
+      <text class="event-head__title">我的想法</text>
+      <text class="event-head__copy">把最近最想说的一句话留在这里，它会慢慢长成你的状态卡。</text>
+    </view>
+    <view class="idea-plus {{pressedIdeaAction === 'plus' ? 'idea-plus--pressed' : ''}}" data-action="plus" bindtouchstart="pressIdeaAction" bindtouchend="releaseIdeaAction" bindtouchcancel="releaseIdeaAction" bindtap="openIdeaComposer">+</view>
+  </view>
+
+  <swiper class="event-swiper" current="{{ideaCurrent}}" previous-margin="36rpx" next-margin="132rpx" circular bindchange="onIdeaSwiperChange">
+    <swiper-item wx:for="{{ideaCards}}" wx:key="id">
+      <view class="event-slide">
+        <view class="event-card event-card--{{item.tone}} idea-card">
+          <view class="event-card__mist"></view>
+          <view class="event-card__body">
+            <view class="event-card__topline">
+              <text class="event-card__tag">一句状态</text>
+              <text class="event-card__date">{{item.createdAt}}</text>
+            </view>
+            <view class="event-card__bottom">
+              <text class="event-card__title">{{item.title}}</text>
+              <text class="idea-card__quote">{{item.quote}}</text>
+              <view class="event-card__footer">
+                <view class="event-card__footer-meta">
+                  <text class="event-card__foot">状态卡</text>
+                  <text class="event-card__foot">个人信息同步</text>
+                </view>
+                <text class="event-card__index">{{index + 1}} / {{ideaCards.length}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <view class="event-dots">
+    <view wx:for="{{ideaCards}}" wx:key="id" class="event-dot {{index === ideaCurrent ? 'event-dot--active' : ''}}"></view>
+  </view>
+
+  <view class="entry-grid">
+    <view class="entry-card entry-card--unlock {{pressedEntry === 'unlock' ? 'entry-card--pressed' : ''}}" data-entry="unlock" bindtouchstart="pressEntryCard" bindtouchend="releaseEntryCard" bindtouchcancel="releaseEntryCard" bindtap="openInviteUnlock">
+      <view class="entry-card__content">
+        <text class="entry-card__eyebrow">{{unlockEntry.badge}}</text>
+        <text class="entry-card__title">{{unlockEntry.title}}</text>
+        <text class="entry-card__copy">{{unlockEntry.detail}}</text>
+        <view class="entry-card__button">{{unlockEntry.cta}}</view>
+      </view>
+    </view>
+
+    <view class="entry-card entry-card--cobuild {{pressedEntry === 'cobuild' ? 'entry-card--pressed' : ''}}" data-entry="cobuild" bindtouchstart="pressEntryCard" bindtouchend="releaseEntryCard" bindtouchcancel="releaseEntryCard" bindtap="openCoBuildPlan">
+      <view class="entry-card__content">
+        <text class="entry-card__eyebrow">{{coBuildEntry.badge}}</text>
+        <text class="entry-card__title">{{coBuildEntry.title}}</text>
+        <text class="entry-card__copy">{{coBuildEntry.detail}}</text>
+        <view class="entry-card__button">{{coBuildEntry.cta}}</view>
+      </view>
+    </view>
+  </view>
+  </block>
+
+  <block wx:else>
+    <view class="launch-panel">
+      <view class="event-head">
+        <view>
+          <text class="event-head__eyebrow">START SOMETHING</text>
+          <text class="event-head__title">发起</text>
+          <text class="event-head__copy">先发出第一场，再慢慢长出后面的关系和机制。</text>
+        </view>
+      </view>
+
+      <view class="entry-grid">
+        <view class="entry-card entry-card--unlock" bindtap="openLaunchDraft">
+          <view class="entry-card__content">
+            <text class="entry-card__eyebrow">Launch card</text>
+            <text class="entry-card__title">直接发起一场见面</text>
+            <text class="entry-card__copy">先定时间、人数和大致方式，把第一场发出去。</text>
+            <view class="entry-card__button">去填写</view>
+          </view>
+        </view>
+
+        <view class="entry-card entry-card--cobuild" bindtap="openAiEntry">
+          <view class="entry-card__content">
+            <text class="entry-card__eyebrow">Draft with AI</text>
+            <text class="entry-card__title">从一句话整理成卡片</text>
+            <text class="entry-card__copy">如果你只有一个模糊想法，也可以先丢一句进去。</text>
+            <view class="entry-card__button">开始整理</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+<view wx:if="{{showIdeaComposer}}" class="event-modal-mask" bindtap="closeIdeaComposer">
+  <view class="event-modal-sheet" catchtap="">
+    <view class="event-modal-sheet__handle"></view>
+    <view class="idea-composer">
+      <text class="idea-composer__eyebrow">Share a thought</text>
+      <text class="idea-composer__title">写下一句状态</text>
+      <text class="idea-composer__copy">完成后，它会自动出现在“我的想法”里，也会同步到个人信息的状态卡。</text>
+      <textarea
+        class="idea-composer__textarea"
+        value="{{ideaDraft}}"
+        bindinput="updateIdeaDraft"
+        maxlength="60"
+        auto-height="{{false}}"
+        show-confirm-bar="{{false}}"
+        hold-keyboard="{{true}}"
+        disable-default-padding="{{true}}"
+        placeholder="比如：我开始允许自己慢下来。"
+        placeholder-class="idea-composer__placeholder"
+      />
+      <view class="idea-composer__actions">
+        <view class="idea-composer__ghost {{pressedIdeaAction === 'cancel' ? 'idea-composer__ghost--pressed' : ''}}" data-action="cancel" bindtouchstart="pressIdeaAction" bindtouchend="releaseIdeaAction" bindtouchcancel="releaseIdeaAction" bindtap="closeIdeaComposer">先不发</view>
+        <view class="idea-composer__primary {{pressedIdeaAction === 'submit' ? 'idea-composer__primary--pressed' : ''}}" data-action="submit" bindtouchstart="pressIdeaAction" bindtouchend="releaseIdeaAction" bindtouchcancel="releaseIdeaAction" bindtap="submitIdea">变成状态卡</view>
+      </view>
+    </view>
+  </view>
+</view>
+</view>

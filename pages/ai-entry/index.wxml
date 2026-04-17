@@ -1,0 +1,71 @@
+<view class="page-shell ai-entry-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
+  <view class="ai-entry-page__glow ai-entry-page__glow--a"></view>
+  <view class="ai-entry-page__glow ai-entry-page__glow--b"></view>
+
+  <nav-shell eyebrow="Launch entry">
+    <view class="ai-entry-nav">
+      <view class="ai-entry-nav__back" bindtap="goBack">‹</view>
+      <view class="ai-entry-nav__copy">
+        <text class="ai-entry-nav__title">分享一点最近的状态</text>
+        <text class="ai-entry-nav__sub">给我一点线索，我替你起卡</text>
+      </view>
+    </view>
+  </nav-shell>
+
+  <view class="ai-entry-composer">
+    <view class="ai-entry-composer__mist ai-entry-composer__mist--a"></view>
+    <view class="ai-entry-composer__mist ai-entry-composer__mist--b"></view>
+
+    <view class="ai-entry-composer__head">
+      <view class="ai-entry-composer__copy">
+        <text class="ai-entry-composer__title">从一句最近的想法开始</text>
+        <text class="ai-entry-composer__sub">一个方向、一个问题，或者今天 lingering 的感受。</text>
+      </view>
+      <view class="ai-entry-composer__record">◉</view>
+    </view>
+
+    <textarea
+      class="ai-entry-composer__textarea"
+      value="{{voiceDraft}}"
+      bindinput="updateVoiceDraft"
+      auto-height
+      maxlength="280"
+      placeholder="比如：我最近想聊聊 AI 为什么一边让人更高效，一边也更疲惫。"
+      placeholder-class="ai-entry-composer__placeholder"
+    />
+
+    <view class="ai-entry-composer__chips">
+      <view wx:for="{{promptChips}}" wx:key="index" class="ai-entry-composer__chip" data-value="{{item}}" bindtap="appendPrompt">
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <view class="ai-entry-actions">
+    <view class="ai-entry-actions__secondary" bindtap="skipEntry">跳过，直接填写</view>
+    <view class="ai-entry-actions__primary" bindtap="generateCard">帮我自动填一版</view>
+  </view>
+
+  <view wx:if="{{processing}}" class="ai-entry-processing">
+    <view class="ai-entry-processing__panel">
+      <view class="ai-entry-processing__glow"></view>
+      <text class="ai-entry-processing__eyebrow">AUTOFILLING YOUR CARD</text>
+      <text class="ai-entry-processing__title">正在替你自动填充对话卡</text>
+      <text class="ai-entry-processing__copy">{{processingMode === 'skip' ? '你选择了直接进入，我们先打开卡片供你自己填写。' : '系统正在根据你刚刚的状态，补一版主题、描述和发起信息。'}}</text>
+      <view class="ai-entry-processing__steps">
+        <view class="ai-entry-processing__step">
+          <text class="ai-entry-processing__step-label">主题</text>
+          <view class="ai-entry-processing__step-bar"></view>
+        </view>
+        <view class="ai-entry-processing__step">
+          <text class="ai-entry-processing__step-label">描述</text>
+          <view class="ai-entry-processing__step-bar"></view>
+        </view>
+        <view class="ai-entry-processing__step">
+          <text class="ai-entry-processing__step-label">时间与方式</text>
+          <view class="ai-entry-processing__step-bar"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

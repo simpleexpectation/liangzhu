@@ -1,0 +1,122 @@
+<view class="page-shell direct-launch-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
+  <view class="direct-launch-page__glow direct-launch-page__glow--a"></view>
+  <view class="direct-launch-page__glow direct-launch-page__glow--b"></view>
+
+  <view wx:if="{{showIntroBridge}}" class="direct-launch-bridge {{introBridgeLeaving ? 'direct-launch-bridge--leaving' : ''}}">
+    <view class="direct-launch-bridge__panel">
+      <view class="direct-launch-bridge__copy">
+        <text class="direct-launch-bridge__title">{{introMode === 'skip' ? '直接补齐这张卡' : '这张对话卡正在展开'}}</text>
+        <text class="direct-launch-bridge__sub">{{introMode === 'skip' ? '你跳过了自动填充，我们直接把结构打开给你补。' : '我们把你刚刚那句状态，顺着整理成一张可发起的对话卡。'}}</text>
+      </view>
+
+      <view class="direct-launch-bridge__draft">
+        <text class="direct-launch-bridge__draft-text">{{introDraft}}</text>
+      </view>
+
+      <view class="direct-launch-bridge__actions">
+        <view class="direct-launch-bridge__action direct-launch-bridge__action--ghost">返回修改</view>
+        <view class="direct-launch-bridge__action direct-launch-bridge__action--primary">{{introMode === 'skip' ? '开始填写' : '整理成卡片'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view scroll-y enhanced show-scrollbar="{{false}}" class="direct-launch-scroll">
+    <view wx:if="{{launchCardMounted}}" class="launch-card {{launchCardReady ? 'launch-card--ready' : ''}}">
+      <view class="launch-card__mist launch-card__mist--a"></view>
+      <view class="launch-card__mist launch-card__mist--b"></view>
+
+      <text class="launch-card__eyebrow">LAUNCH CARD</text>
+      <text class="launch-card__title">这张对话卡已经成形</text>
+      <text class="launch-card__copy">系统已经先替你起好一版。现在只要补足必要信息，就可以把它发出去。</text>
+
+      <view class="launch-card__grid">
+        <view class="launch-card__cell launch-card__cell--wide">
+          <text class="launch-card__label">话题</text>
+          <textarea
+            class="launch-card__textarea launch-card__textarea--title {{textareasReady ? '' : 'launch-card__textarea--locked'}} {{textareasReady ? '' : 'launch-card__textarea--title-locked'}}"
+            value="{{form.topic}}"
+            data-field="topic"
+            bindinput="updateField"
+            maxlength="80"
+            auto-height="{{textareasReady}}"
+            placeholder="这次想聊什么"
+            placeholder-class="launch-card__placeholder"
+          />
+        </view>
+
+        <view class="launch-card__cell launch-card__cell--wide">
+          <text class="launch-card__label">描述</text>
+          <textarea
+            class="launch-card__textarea {{textareasReady ? '' : 'launch-card__textarea--locked'}}"
+            value="{{form.reason}}"
+            data-field="reason"
+            bindinput="updateField"
+            maxlength="180"
+            auto-height="{{textareasReady}}"
+            placeholder="为什么值得聊，别人为什么会想加入"
+            placeholder-class="launch-card__placeholder"
+          />
+        </view>
+
+        <view class="launch-card__cell">
+          <text class="launch-card__label">时间</text>
+          <input
+            class="launch-card__input"
+            value="{{form.time}}"
+            data-field="time"
+            bindinput="updateField"
+            maxlength="40"
+            placeholder="周六下午"
+            placeholder-class="launch-card__placeholder"
+          />
+        </view>
+
+        <view wx:if="{{launchMode === 'offline'}}" class="launch-card__cell">
+          <text class="launch-card__label">地点</text>
+          <input
+            class="launch-card__input"
+            value="{{form.venue}}"
+            data-field="venue"
+            bindinput="updateField"
+            maxlength="40"
+            placeholder="杭州"
+            placeholder-class="launch-card__placeholder"
+          />
+        </view>
+
+        <view wx:if="{{launchMode === 'offline'}}" class="launch-card__cell">
+          <text class="launch-card__label">人数</text>
+          <text class="launch-card__value">2 人</text>
+        </view>
+
+        <view wx:if="{{launchMode === 'online'}}" class="launch-card__cell">
+          <text class="launch-card__label">方式</text>
+          <input
+            class="launch-card__input"
+            value="{{form.platform}}"
+            data-field="platform"
+            bindinput="updateField"
+            maxlength="40"
+            placeholder="微信群 / 线上房间"
+            placeholder-class="launch-card__placeholder"
+          />
+        </view>
+
+        <view wx:if="{{launchMode === 'online'}}" class="launch-card__cell">
+          <text class="launch-card__label">加入</text>
+          <text class="launch-card__value">开放加入</text>
+        </view>
+      </view>
+
+      <view class="launch-note">
+        <text class="launch-note__label">如果你刚刚跳过了自动填充</text>
+        <text class="launch-note__copy">现在只要把上面 3 到 4 个位置补齐，也能直接发起。</text>
+      </view>
+
+      <view class="direct-launch-footer">
+        <view class="direct-launch-footer__ghost" bindtap="goBack">返回上一步</view>
+        <view class="direct-launch-footer__primary" bindtap="confirmLaunch">确认发起</view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
