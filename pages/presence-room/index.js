@@ -1,3 +1,4 @@
+const backend = require('../../lib/backend/index')
 const { presenceRooms } = require('../../data/mock')
 
 const defaultRoom = presenceRooms[0]
@@ -7,11 +8,17 @@ Page({
     room: defaultRoom,
     pageReady: false,
     pageLeaving: false,
-    draft: ''
+    draft: '',
+    backendMode: 'mock',
+    sending: false
   },
-  onLoad(options) {
-    const room = presenceRooms.find((item) => item.conversationId === options.id) || defaultRoom
-    this.setData({ room })
+  async onLoad(options) {
+    const result = await backend.fetchPresenceRoom(options.id)
+    const room = result.room || presenceRooms.find((item) => item.conversationId === options.id) || defaultRoom
+    this.setData({
+      room,
+      backendMode: result.mode
+    })
   },
   onShow() {
     this.setData({ pageLeaving: false, pageReady: false })
@@ -28,10 +35,23 @@ Page({
   onDraftInput(e) {
     this.setData({ draft: e.detail.value })
   },
-  sendDraft() {
-    wx.showToast({
-      title: '先做同行房体验，真实发言后面接入',
-      icon: 'none'
-    })
+  async sendDraft() {
+    const draft = this.data.draft.trim()
+    if (!draft || this.data.sending) return
+    this.setData({ sending: true })
+    try {
+      const result = await backend.sendPresenceRoomMessage(this.data.room.conversationId, draft)
+      this.setData({
+        room: result.room,
+        draft: '',
+        backendMode: result.mode
+      })
+      wx.showToast({
+        title: result.message,
+        icon: 'none'
+      })
+    } finally {
+      this.setData({ sending: false })
+    }
   }
 })

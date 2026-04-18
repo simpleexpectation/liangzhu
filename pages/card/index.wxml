@@ -1,35 +1,37 @@
 <view class="page-shell space-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
   <view class="space-page__top-mask"></view>
 
-  <nav-shell>
-    <view class="tab-switch">
-      <view
-        class="tab-switch__item {{activeTab === 'tonight' ? 'tab-switch__item--active' : ''}}"
-        bindtap="switchTab"
-        data-tab="tonight"
-      >
-        <text class="tab-switch__eyebrow">Tonight</text>
-        <text class="tab-switch__label">今晚</text>
+  <view class="home-hero-overlay">
+    <nav-shell class="home-hero-nav">
+      <view class="tab-switch tab-switch--floating">
+        <view
+          class="tab-switch__item {{activeTab === 'tonight' ? 'tab-switch__item--active' : ''}}"
+          bindtap="switchTab"
+          data-tab="tonight"
+        >
+          <text class="tab-switch__eyebrow">Tonight</text>
+          <text class="tab-switch__label">今晚</text>
+        </view>
+        <view
+          class="tab-switch__item {{activeTab === 'week' ? 'tab-switch__item--active' : ''}}"
+          bindtap="switchTab"
+          data-tab="week"
+        >
+          <text class="tab-switch__eyebrow">This Week</text>
+          <text class="tab-switch__label">这周</text>
+        </view>
       </view>
-      <view
-        class="tab-switch__item {{activeTab === 'week' ? 'tab-switch__item--active' : ''}}"
-        bindtap="switchTab"
-        data-tab="week"
-      >
-        <text class="tab-switch__eyebrow">This Week</text>
-        <text class="tab-switch__label">这周</text>
-      </view>
-    </view>
-  </nav-shell>
+    </nav-shell>
+  </view>
 
   <swiper class="topic-section-swiper" current="{{activeTabIndex}}" duration="360" bindchange="onTopicSectionChange">
     <swiper-item>
       <scroll-view scroll-y class="topic-section-scroll">
-        <view class="topic-feed">
+        <view class="topic-feed topic-feed--hero">
           <view
             wx:for="{{visibleTopics}}"
             wx:key="id"
-            class="topic-film-card topic-film-card--{{index % 5}} {{pressedTopicId === item.id ? 'topic-film-card--pressed' : ''}}"
+            class="topic-film-card topic-film-card--{{index % 5}} {{index === 0 ? 'topic-film-card--hero' : ''}} {{pressedTopicId === item.id ? 'topic-film-card--pressed' : ''}}"
             data-id="{{item.id}}"
             bindtouchstart="pressTopicCard"
             bindtouchend="releaseTopicCard"
@@ -40,10 +42,6 @@
             <view class="topic-film-card__mist topic-film-card__mist--b"></view>
 
             <view class="topic-film-card__scene">
-              <view class="topic-film-card__status-line">
-                <view class="topic-film-card__pill">{{item.statusLabel}}</view>
-              </view>
-
               <view class="topic-film-card__people-stack">
                 <view
                   wx:for="{{attendeeCards}}"
@@ -59,19 +57,21 @@
 
             <view class="topic-film-card__body">
               <text class="topic-film-card__title">{{item.title}}</text>
-              <view class="topic-film-card__meta-pills">
-                <text class="topic-film-card__meta-pill">{{item.initiator}} 发起</text>
-                <text class="topic-film-card__meta-pill">{{item.time}}</text>
-                <text class="topic-film-card__meta-pill">{{item.location}}</text>
+              <view class="topic-film-card__footer-cluster">
+                <view class="topic-film-card__meta-pills">
+                  <text class="topic-film-card__meta-pill">{{item.initiator}} 发起</text>
+                  <text class="topic-film-card__meta-pill">{{item.time}}</text>
+                  <text class="topic-film-card__meta-pill">{{item.location}}</text>
+                </view>
+
+                <view class="topic-film-card__actions">
+                  <view class="topic-film-card__action topic-film-card__action--primary" data-id="{{item.id}}" catchtap="joinTopic">加入今晚</view>
+                  <view class="topic-film-card__action" data-id="{{item.id}}" catchtap="rememberTopic">先记住</view>
+                </view>
+
+                <text class="topic-film-card__footnote">{{item.rules}}</text>
               </view>
             </view>
-
-            <view class="topic-film-card__actions">
-              <view class="topic-film-card__action topic-film-card__action--primary" data-id="{{item.id}}" catchtap="joinTopic">加入今晚</view>
-              <view class="topic-film-card__action" data-id="{{item.id}}" catchtap="rememberTopic">先记住</view>
-            </view>
-
-            <text class="topic-film-card__footnote">{{item.rules}}</text>
           </view>
 
           <view class="launch-home">
@@ -88,13 +88,6 @@
                 <text class="launch-home__card-copy">先定时间、人数和方式，把这场见面发出去。</text>
                 <view class="launch-home__card-action">去填写</view>
               </view>
-
-              <view class="launch-home__card launch-home__card--secondary" bindtap="openAiEntry">
-                <text class="launch-home__card-eyebrow">Draft with AI</text>
-                <text class="launch-home__card-title">从一句话整理成卡片</text>
-                <text class="launch-home__card-copy">如果你现在只有一个模糊想法，也可以先丢一句进去。</text>
-                <view class="launch-home__card-action">开始整理</view>
-              </view>
             </view>
           </view>
         </view>
@@ -103,8 +96,8 @@
 
     <swiper-item>
       <scroll-view scroll-y class="topic-section-scroll">
-        <view class="topic-feed">
-          <view class="week-timeline glass-panel">
+        <view class="topic-feed topic-feed--hero topic-feed--week">
+          <view class="week-timeline week-timeline--hero glass-panel">
             <scroll-view scroll-x show-scrollbar="{{false}}" class="week-timeline__scroll">
               <view class="week-timeline__track">
                 <view
@@ -128,7 +121,7 @@
             <view
               wx:for="{{weekTopics}}"
               wx:key="id"
-              class="topic-film-card topic-film-card--week topic-film-card--{{index % 5}} {{pressedTopicId === item.id ? 'topic-film-card--pressed' : ''}}"
+              class="topic-film-card topic-film-card--week topic-film-card--{{index % 5}} {{index === 0 ? 'topic-film-card--hero' : ''}} {{pressedTopicId === item.id ? 'topic-film-card--pressed' : ''}}"
               data-id="{{item.id}}"
               bindtouchstart="pressTopicCard"
               bindtouchend="releaseTopicCard"
@@ -139,10 +132,6 @@
               <view class="topic-film-card__mist topic-film-card__mist--b"></view>
 
               <view class="topic-film-card__scene">
-                <view class="topic-film-card__status-line">
-                  <view class="topic-film-card__pill">{{item.statusLabel}}</view>
-                </view>
-
                 <view class="topic-film-card__people-stack">
                   <view
                     wx:for="{{attendeeCards}}"
@@ -158,19 +147,21 @@
 
               <view class="topic-film-card__body">
                 <text class="topic-film-card__title">{{item.title}}</text>
-                <view class="topic-film-card__meta-pills">
-                  <text class="topic-film-card__meta-pill">{{item.initiator}} 发起</text>
-                  <text class="topic-film-card__meta-pill">{{item.time}}</text>
-                  <text class="topic-film-card__meta-pill">{{item.location}}</text>
+                <view class="topic-film-card__footer-cluster">
+                  <view class="topic-film-card__meta-pills">
+                    <text class="topic-film-card__meta-pill">{{item.initiator}} 发起</text>
+                    <text class="topic-film-card__meta-pill">{{item.time}}</text>
+                    <text class="topic-film-card__meta-pill">{{item.location}}</text>
+                  </view>
+
+                  <view class="topic-film-card__actions">
+                    <view class="topic-film-card__action topic-film-card__action--primary" data-id="{{item.id}}" catchtap="joinTopic">加入这周</view>
+                    <view class="topic-film-card__action" data-id="{{item.id}}" catchtap="rememberTopic">先记住</view>
+                  </view>
+
+                  <text class="topic-film-card__footnote">{{item.rules}}</text>
                 </view>
               </view>
-
-              <view class="topic-film-card__actions">
-                <view class="topic-film-card__action topic-film-card__action--primary" data-id="{{item.id}}" catchtap="joinTopic">加入这周</view>
-                <view class="topic-film-card__action" data-id="{{item.id}}" catchtap="rememberTopic">先记住</view>
-              </view>
-
-              <text class="topic-film-card__footnote">{{item.rules}}</text>
             </view>
           </block>
 
@@ -193,13 +184,6 @@
                 <text class="launch-home__card-title">直接发起一场见面</text>
                 <text class="launch-home__card-copy">把第一场时间、人数和形式先定下来。</text>
                 <view class="launch-home__card-action">去填写</view>
-              </view>
-
-              <view class="launch-home__card launch-home__card--secondary" bindtap="openAiEntry">
-                <text class="launch-home__card-eyebrow">Draft with AI</text>
-                <text class="launch-home__card-title">从一句话整理成卡片</text>
-                <text class="launch-home__card-copy">一句问题、一种状态，都可以先变成草稿。</text>
-                <view class="launch-home__card-action">开始整理</view>
               </view>
             </view>
           </view>

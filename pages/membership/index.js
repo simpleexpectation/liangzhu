@@ -1,3 +1,5 @@
+const backend = require('../../lib/backend/index')
+
 Page({
   data: {
     pageReady: false,
@@ -56,7 +58,25 @@ Page({
     inviteProgram: {
       buttonText: '邀请 2 位好友，限时 0 元开启',
       description: '好友完成注册并参与第一次对话后，你的月卡自动生效。无需付款，无需等待。'
-    }
+    },
+    backendMode: 'mock'
+  },
+  async onLoad() {
+    const overview = await backend.fetchMembershipOverview()
+    this.setData({
+      selectedPlanKey: overview.selectedPlanKey,
+      planOptions: overview.planOptions.map((item) => ({
+        ...item,
+        perks: (overview.membershipBenefitsByPlan[item.key] || []).map((benefit) => `${benefit.icon} ${benefit.title}`)
+      })),
+      activePlan: {
+        ...overview.activePlan,
+        perks: (overview.membershipBenefitsByPlan[overview.activePlan.key] || []).map((benefit) => `${benefit.icon} ${benefit.title}`)
+      },
+      limitedQuota: overview.limitedQuota,
+      inviteProgram: overview.inviteProgram,
+      backendMode: overview.mode
+    })
   },
   onShow() {
     this.enterPage()

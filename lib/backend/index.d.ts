@@ -77,6 +77,102 @@ export interface PersonProfile {
   connectionHint: string
 }
 
+export interface MembershipPlan {
+  key: string
+  badge: string
+  title: string
+  plan: string
+  price: string
+  billing: string
+  copy: string
+  renewal: string
+  cta: string
+}
+
+export interface MembershipBenefit {
+  icon: string
+  title: string
+}
+
+export interface MembershipOverview {
+  selectedPlanKey: string
+  planOptions: MembershipPlan[]
+  activePlan: MembershipPlan
+  activeBenefits: MembershipBenefit[]
+  membershipBenefitsByPlan: Record<string, MembershipBenefit[]>
+  cobuildBenefits: MembershipBenefit[]
+  quota: { remaining: number; total: number }
+  limitedQuota: { remaining: number; total: number }
+  inviteProgram: { buttonText: string; description: string }
+  inviteCode: string
+}
+
+export interface InviteSlot {
+  key: string
+  label: string
+  status: string
+  active: boolean
+}
+
+export interface PresenceEvent {
+  title: string
+  schedule: string
+  venue: string
+  status: string
+  passCode: string
+  qrHint: string
+  notice: string
+}
+
+export interface PresenceAttendeeCard {
+  id: string
+  name: string
+  line: string
+  expectation: string
+  accent: string
+}
+
+export interface PresenceConversation {
+  id: string
+  title: string
+  schedule: string
+  venue: string
+  month: string
+  day: string
+  role: string
+  roleLabel: string
+  status: string
+  statusLabel: string
+  statusHint: string
+  autoConfirmHint: string
+  ticketReady: boolean
+  roomReady: boolean
+  attendeeCount: number
+  featuredAttendeeId: string
+  featuredAttendeeName: string
+  featuredAttendeeLine: string
+}
+
+export interface PresenceRoomMessage {
+  id: string
+  type: string
+  name: string
+  text: string
+  time: string
+}
+
+export interface PresenceRoom {
+  conversationId: string
+  title: string
+  schedule: string
+  venue: string
+  badge: string
+  hint: string
+  prompt: string
+  participants: string[]
+  messages: PresenceRoomMessage[]
+}
+
 export function bootstrapBackend(): Promise<{ mode: 'cloud' | 'mock'; error?: unknown }>
 export function ensureCurrentUser(): Promise<{ mode: 'cloud' | 'mock'; user: BackendUser; error?: unknown }>
 export function fetchDiscoveryFeed(): Promise<{ mode: 'cloud' | 'mock'; venues: Venue[]; topics: Topic[]; error?: unknown }>
@@ -100,5 +196,61 @@ export function fetchPersonProfile(id: string): Promise<{
   mode: 'cloud' | 'mock'
   person: PersonProfile
   visibleEvents: ProfileEvent[]
+  error?: unknown
+}>
+export function fetchMembershipOverview(): Promise<MembershipOverview & { mode: 'cloud' | 'mock'; error?: unknown }>
+export function fetchInviteStatus(): Promise<{
+  mode: 'cloud' | 'mock'
+  inviteCode: string
+  unlockSlots: InviteSlot[]
+  error?: unknown
+}>
+export function createLaunch(payload: {
+  source?: string
+  launchMode?: string
+  topic?: string
+  reason?: string
+  time?: string
+  venue?: string
+  platform?: string
+  joinHint?: string
+}): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
+  topic: any
+  error?: unknown
+}>
+export function fetchPresenceOverview(): Promise<{
+  mode: 'cloud' | 'mock'
+  presenceEvent: PresenceEvent
+  attendeeCards: PresenceAttendeeCard[]
+  presenceConversations: PresenceConversation[]
+  error?: unknown
+}>
+export function fetchPresenceRoom(id: string): Promise<{
+  mode: 'cloud' | 'mock'
+  room: PresenceRoom
+  error?: unknown
+}>
+export function sendPresenceRoomMessage(id: string, text: string): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
+  room: PresenceRoom
+  error?: unknown
+}>
+export function decidePresenceConversation(id: string, decision: 'approve' | 'reject'): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
+  conversation?: PresenceConversation
+  error?: unknown
+}>
+export function completePresenceConversation(id: string): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
+  conversation?: PresenceConversation
   error?: unknown
 }>

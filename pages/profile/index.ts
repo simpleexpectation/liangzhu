@@ -40,7 +40,6 @@ function writeStoredIdeas(ideas) {
 
 Page({
   data: {
-    activeTab: 'saved',
     user: {
       name: 'Lynn',
       initial: 'L',
@@ -106,11 +105,6 @@ Page({
   },
   onIdeaSwiperChange(e) {
     this.setData({ ideaCurrent: e.detail.current })
-  },
-  switchTab(e) {
-    const { tab } = e.currentTarget.dataset
-    if (!tab) return
-    this.setData({ activeTab: tab })
   },
   pressIdeaAction(e) {
     const { action } = e.currentTarget.dataset

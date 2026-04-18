@@ -1,51 +1,200 @@
 <view class="blackhole-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
-  <view class="presence-shell presence-shell--light">
+  <view wx:if="{{presencePhase !== 'during'}}" class="presence-shell presence-shell--light">
     <view class="presence-shell__glow presence-shell__glow--a"></view>
     <view class="presence-shell__glow presence-shell__glow--b"></view>
-    <view class="presence-top-offset presence-top-offset--meet" style="height: {{statusBarHeight + 6}}px;"></view>
-
-    <nav-shell compact>
-      <view class="meet-banner">
-        <text class="meet-banner__eyebrow">MEET</text>
-        <text class="meet-banner__label">见面</text>
+    <view class="presence-top-offset" style="height: {{statusBarHeight + 24}}px;"></view>
+    <view class="presence-subtabs presence-subtabs--single">
+      <view class="presence-subtabs__item presence-subtabs__item--active">
+        <text class="presence-subtabs__eyebrow">Presence</text>
+        <text class="presence-subtabs__label">在场</text>
       </view>
-      <view class="presence-page-head">
-        <text class="presence-page-head__copy">先看见不同的人，再决定你想和谁真正见一面。</text>
-      </view>
-    </nav-shell>
-
-    <scroll-view scroll-y class="presence-section-scroll">
-      <view class="meet-feed">
+    </view>
+    <scroll-view scroll-y class="presence-section-scroll presence-section-scroll--single">
+      <view class="presence-before">
+        <view class="presence-conversation-list">
         <view
-          wx:for="{{meetPeopleRows}}"
+          wx:for="{{presenceConversations}}"
           wx:key="id"
-          class="meet-row"
+          class="presence-dialog presence-dialog--{{index % 9}} {{selectedConversationId === item.id ? 'presence-dialog--active' : ''}} {{item.status === 'confirmed' && item.ticketReady ? 'presence-dialog--hero' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="selectConversation"
         >
-          <view
-            wx:if="{{item.left}}"
-            class="meet-person-card meet-person-card--left meet-person-card--{{item.left.tone}} meet-person-card--offset-{{item.left.offset}}"
-            data-person-id="{{item.left.personId}}"
-            bindtap="openPerson"
-          >
-            <text class="meet-person-card__name">{{item.left.name}}</text>
-            <text class="meet-person-card__line">{{item.left.line}}</text>
-            <text class="meet-person-card__title">{{item.left.title}}</text>
-            <text class="meet-person-card__quote">{{item.left.quote}}</text>
+          <view class="presence-dialog__mist presence-dialog__mist--a"></view>
+          <view class="presence-dialog__mist presence-dialog__mist--b"></view>
+          <view class="presence-dialog__head">
+            <view class="presence-dialog__role-row">
+              <text class="presence-dialog__role">{{item.roleLabel}}</text>
+              <text wx:if="{{item.status === 'recap'}}" class="presence-dialog__ephemeral">24h 内可留痕</text>
+            </view>
+            <view class="presence-dialog__date">
+              <text class="presence-dialog__month">{{item.month}}</text>
+              <text class="presence-dialog__day">{{item.day}}</text>
+            </view>
           </view>
 
-          <view
-            wx:if="{{item.right}}"
-            class="meet-person-card meet-person-card--right meet-person-card--{{item.right.tone}} meet-person-card--offset-{{item.right.offset}}"
-            data-person-id="{{item.right.personId}}"
-            bindtap="openPerson"
-          >
-            <text class="meet-person-card__name">{{item.right.name}}</text>
-            <text class="meet-person-card__line">{{item.right.line}}</text>
-            <text class="meet-person-card__title">{{item.right.title}}</text>
-            <text class="meet-person-card__quote">{{item.right.quote}}</text>
+          <view class="presence-dialog__body">
+            <text class="presence-dialog__title">{{item.title}}</text>
+            <text class="presence-dialog__meta">{{item.schedule}} · {{item.venue}}</text>
           </view>
+
+          <view class="presence-dialog__status">
+            <view class="presence-dialog__pill presence-dialog__pill--{{item.status}}">{{item.statusLabel}}</view>
+            <text class="presence-dialog__hint">{{item.statusHint}}</text>
+          </view>
+
+          <text class="presence-dialog__auto">{{item.autoConfirmHint}}</text>
+          <view class="presence-dialog__chevron-row">
+            <text class="presence-dialog__chevron {{selectedConversationId === item.id ? 'presence-dialog__chevron--active' : ''}}">▾</text>
+          </view>
+
+          <view wx:if="{{selectedConversationId === item.id}}" class="presence-dialog__detail">
+            <view wx:if="{{item.status === 'recap'}}" class="presence-mini-card">
+              <text class="presence-mini-card__title">这场对话刚刚结束</text>
+              <text class="presence-mini-card__copy">如果愿意，把这一刻写下来。24 小时后它会自然消失。</text>
+              <view class="presence-mini-card__actions">
+                <view class="presence-mini-card__button presence-mini-card__button--ghost" bindtap="createMoment">写此刻</view>
+              </view>
+            </view>
+
+            <view wx:elif="{{item.role === 'host' && item.status === 'pending'}}" class="presence-mini-card">
+              <text class="presence-mini-card__title">有人申请加入</text>
+              <text class="presence-mini-card__copy">先看名片，再决定是否接受。这一步还是留在这里更自然。</text>
+              <view class="presence-mini-card__actions">
+                <view class="presence-mini-card__button presence-mini-card__button--ghost" data-id="{{item.id}}" bindtap="openRosterSheet">先看名片</view>
+                <view class="presence-mini-card__button presence-mini-card__button--ghost" data-id="{{item.id}}" bindtap="rejectApplicant">暂不同意</view>
+                <view class="presence-mini-card__button presence-mini-card__button--cta" data-id="{{item.id}}" bindtap="approveApplicant">同意加入</view>
+              </view>
+            </view>
+
+            <view wx:elif="{{item.status === 'confirmed' && item.ticketReady}}">
+              <view class="presence-action-dock">
+                <text class="presence-action-dock__hint">票据里再展示二维码，避免提前暴露过多功能。</text>
+                <view class="presence-action-dock__actions">
+                  <view class="presence-action-dock__ghost" data-id="{{item.id}}" bindtap="openPresenceRoom">聊天室</view>
+                  <view class="presence-action-dock__ghost" data-id="{{item.id}}" bindtap="openRosterSheet">参与人</view>
+                  <view class="presence-action-dock__ghost" bindtap="openPassSheet">票据</view>
+                  <view class="presence-action-dock__cta" data-id="{{item.id}}" bindtap="enterImmersive">签到</view>
+                </view>
+              </view>
+            </view>
+
+            <view wx:elif="{{item.role === 'applicant' && item.status === 'pending'}}" class="presence-mini-card">
+              <text class="presence-mini-card__title">现在先不用继续做什么</text>
+              <text class="presence-mini-card__copy">等对方确认之后，聊天室才会开放。现在你只需要保留一点点期待。</text>
+            </view>
+
+            <view wx:elif="{{item.status === 'declined'}}" class="presence-mini-card presence-mini-card--muted">
+              <text class="presence-mini-card__title">这次没有成局</text>
+              <text class="presence-mini-card__copy">不需要再处理什么，系统已经替你保留了相近的推荐线索。</text>
+            </view>
+          </view>
+        </view>
         </view>
       </view>
     </scroll-view>
+  </view>
+
+  <view wx:if="{{presencePhase === 'during'}}" class="immersive-scene">
+    <view class="immersive-scene__veil immersive-scene__veil--top"></view>
+    <view class="immersive-scene__veil immersive-scene__veil--bottom"></view>
+    <view class="immersive-scene__grain"></view>
+    <view class="immersive-back" bindtap="exitImmersive">返回</view>
+    <view class="immersive-scene__ambient immersive-scene__ambient--a"></view>
+    <view class="immersive-scene__ambient immersive-scene__ambient--b"></view>
+    <view class="immersive-scene__ambient immersive-scene__ambient--c"></view>
+
+    <view class="immersive-meteor immersive-meteor--1"></view>
+    <view class="immersive-meteor immersive-meteor--2"></view>
+    <view class="immersive-meteor immersive-meteor--3"></view>
+    <view class="immersive-meteor immersive-meteor--4"></view>
+    <view class="immersive-meteor immersive-meteor--5"></view>
+
+    <view class="immersive-copy">
+      <view class="immersive-copy__line immersive-copy__line--cn immersive-copy__shadow immersive-copy__shadow--cn">
+        <text
+          wx:for="{{immersiveCopyCn}}"
+          wx:key="index"
+          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
+          style="animation-delay: {{item.delay}};"
+        >{{item.glyph}}</text>
+      </view>
+      <view class="immersive-copy__line immersive-copy__line--cn immersive-copy__title immersive-copy__title--cn">
+        <text
+          wx:for="{{immersiveCopyCn}}"
+          wx:key="index"
+          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
+          style="animation-delay: {{item.delay}};"
+        >{{item.glyph}}</text>
+      </view>
+      <view class="immersive-copy__line immersive-copy__line--en immersive-copy__shadow immersive-copy__shadow--en">
+        <text
+          wx:for="{{immersiveCopyEn}}"
+          wx:key="index"
+          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
+          style="animation-delay: {{item.delay}};"
+        >{{item.glyph}}</text>
+      </view>
+      <view class="immersive-copy__line immersive-copy__line--en immersive-copy__title immersive-copy__title--en">
+        <text
+          wx:for="{{immersiveCopyEn}}"
+          wx:key="index"
+          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
+          style="animation-delay: {{item.delay}};"
+        >{{item.glyph}}</text>
+      </view>
+    </view>
+
+    <view class="immersive-minibar">
+      <view class="immersive-minibar__end" bindtap="completeSession">结束活动</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{enteringImmersive}}" class="presence-entry">
+  <view class="presence-entry__glow presence-entry__glow--a"></view>
+  <view class="presence-entry__glow presence-entry__glow--b"></view>
+  <view class="presence-entry__panel">
+    <text class="presence-entry__eyebrow">正在进入在场</text>
+    <text class="presence-entry__title">让屏幕慢一点</text>
+    <text class="presence-entry__copy">真实的交流，正在前面等你。</text>
+  </view>
+</view>
+
+<view wx:if="{{showRosterSheet}}" class="presence-sheet" bindtap="closeRosterSheet">
+  <view class="presence-sheet__panel presence-sheet__panel--roster" catchtap="">
+    <view class="presence-sheet__handle"></view>
+    <text class="presence-sheet__label">数字名片</text>
+    <text class="presence-sheet__title">与当前对话相关的人</text>
+    <text class="presence-sheet__meta">这里再慢慢看，不必在首页一次性看完。</text>
+
+    <view class="presence-cards__grid">
+      <view wx:for="{{attendeeCards}}" wx:key="id" class="presence-card presence-card--{{item.accent}}">
+        <text class="presence-card__name">{{item.name}}</text>
+        <text class="presence-card__line">{{item.line}}</text>
+        <text class="presence-card__expectation">{{item.expectation}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{showPassSheet}}" class="presence-sheet" bindtap="closePassSheet">
+  <view class="presence-sheet__panel" catchtap="">
+    <view class="presence-sheet__handle"></view>
+    <text class="presence-sheet__label">入场票据</text>
+    <text class="presence-sheet__title">{{presenceEvent.title}}</text>
+    <text class="presence-sheet__meta">{{presenceEvent.schedule}} · {{presenceEvent.venue}}</text>
+
+    <view class="presence-pass__qr">
+      <view wx:for="{{qrMatrix}}" wx:key="index" class="presence-pass__qr-row">
+        <view
+          wx:for="{{item}}"
+          wx:key="index"
+          class="presence-pass__qr-cell {{item ? 'presence-pass__qr-cell--solid' : ''}}"
+        ></view>
+      </view>
+    </view>
+
+    <text class="presence-sheet__hint">{{presenceEvent.qrHint}}</text>
+    <view class="cta-button cta-button--light" bindtap="closePassSheet">收起</view>
   </view>
 </view>

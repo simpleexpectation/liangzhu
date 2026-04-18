@@ -1,3 +1,5 @@
+const backend = require('../../lib/backend/index') as typeof import('../../lib/backend/index')
+
 const unlockSlots = [
   { key: 'self', label: '你自己', status: '已点亮', active: true },
   { key: 'friend-a', label: '好友 #1', status: '等待中', active: false },
@@ -10,12 +12,17 @@ Page({
     pageLeaving: false,
     statusBarHeight: 20,
     inviteCode: 'SIMPEX-2026',
-    unlockSlots
+    unlockSlots,
+    backendMode: 'mock'
   },
-  onLoad() {
+  async onLoad() {
     const systemInfo = wx.getSystemInfoSync()
+    const invite = await backend.fetchInviteStatus()
     this.setData({
-      statusBarHeight: systemInfo.statusBarHeight || 20
+      statusBarHeight: systemInfo.statusBarHeight || 20,
+      inviteCode: invite.inviteCode,
+      unlockSlots: invite.unlockSlots,
+      backendMode: invite.mode
     })
   },
   onShow() {

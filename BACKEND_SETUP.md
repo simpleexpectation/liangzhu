@@ -11,12 +11,17 @@
 - 话题报名写入 `topic_applications`
 - 个人主页读取用户和“我的事件”
 - 人物页读取人物档案与关联事件
+- 会员页、权益页、邀请页读取会员与邀请状态
+- 发起页写入发起请求
+- 在场页读取真实在场列表与同行房
+- 同行房写入真实发言
+- 发起人可处理加入申请并结束一场对话
 
 ## 你需要在微信开发者工具里做的事
 
 1. 开通云开发环境
 2. 记录你的云环境 ID
-3. 在 [lib/backend/index.js](/Users/zhenyu/Desktop/Simpex/simpex_ui/simpex/lib/backend/index.js) 里，把 `replace-with-your-cloud-env-id` 改成真实环境 ID
+3. 在 [lib/backend/index.js](/Users/zhenyu/Desktop/今晚良渚见一面/lib/backend/index.js) 里，把 `replace-with-your-cloud-env-id` 改成真实环境 ID
 4. 在云开发数据库里创建这些集合：
    - `simpex_users`
    - `simpex_venues`
@@ -25,6 +30,11 @@
    - `simpex_profile_events`
    - `simpex_official_events`
    - `simpex_topic_applications`
+   - `simpex_memberships`
+   - `simpex_invites`
+   - `simpex_launch_requests`
+   - `simpex_presence_conversations`
+   - `simpex_presence_rooms`
 5. 右键部署云函数 `cloudfunctions/api`
 
 ## 首次运行会发生什么
@@ -33,7 +43,7 @@
 - 如果数据库是空的，云函数会自动写入第一批种子数据
 - 如果云环境没配好，前端会自动回退到本地 mock，不会直接白屏
 
-## 明天白天建议优先做的两件事
+## 下一步建议优先做的两件事
 
-1. 把“最近状态 -> 可发起话题”的 AI 提示词链路做出来
-2. 给 `topic_applications`、用户资料、我的事件 增加真正的写操作和后台管理
+1. 给“我的事件”补写入接口，让在场结束后能直接沉淀 moment
+2. 给邀请、会员、发起增加后台审核与支付链路

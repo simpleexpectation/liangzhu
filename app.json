@@ -2,6 +2,7 @@
   "pages": [
     "pages/card/index",
     "pages/meet/index",
+    "pages/quadrant-demo/index",
     "pages/ai-entry/index",
     "pages/conversation-starter/index",
     "pages/direct-launch/index",

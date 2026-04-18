@@ -1,3 +1,5 @@
+const backend = require('../../lib/backend/index') as typeof import('../../lib/backend/index')
+
 Page({
   data: {
     source: 'profile',
@@ -61,14 +63,25 @@ Page({
       { icon: '✦', title: '每成功邀请一位完成月度订阅，你会获得25%对应的持续关键回馈' },
       { icon: '◈', title: '共建者可获得月卡权益与长期共建身份标识' },
       { icon: '⌖', title: '面向已被验证的高质量参与者、发起者与 KOL 开放' }
-    ]
+    ],
+    backendMode: 'mock'
   },
-  onLoad(query: Record<string, string>) {
+  async onLoad(query: Record<string, string>) {
     const systemInfo = wx.getSystemInfoSync()
+    const overview = await backend.fetchMembershipOverview()
     this.setData({
       source: query.source || 'profile',
       mode: query.mode === 'cobuild' ? 'cobuild' : 'unlock',
-      statusBarHeight: systemInfo.statusBarHeight || 20
+      statusBarHeight: systemInfo.statusBarHeight || 20,
+      quota: overview.quota,
+      selectedPlanKey: overview.selectedPlanKey,
+      planOptions: overview.planOptions,
+      activePlan: overview.activePlan,
+      inviteCode: overview.inviteCode,
+      membershipBenefitsByPlan: overview.membershipBenefitsByPlan,
+      activeBenefits: overview.activeBenefits,
+      cobuildBenefits: overview.cobuildBenefits,
+      backendMode: overview.mode
     })
   },
   onShow() {

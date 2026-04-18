@@ -1,3 +1,5 @@
+const backend = require('../../lib/backend/index')
+
 const venueOptions = [
   { key: 'changkai', name: '敞开酒馆', mood: '适合慢下来认真聊', slot: '晚间可发起' },
   { key: 'boguang', name: '泊光集', mood: '适合复盘与余味', slot: '夜晚更合适' },
@@ -86,6 +88,8 @@ Page({
     selectedGeneratedId: '',
     showManualFields: true,
     previewGradientStyle: createGradientStyle('simpex'),
+    backendMode: 'mock',
+    isSubmitting: false,
     form: {
       topic: '最近这段时间，有没有一件小事让你慢慢觉得自己开始进入新生活了？',
       reason: '我想从一个最近真实发生的小片段开始，和几个人认真聊一聊。',
@@ -266,9 +270,35 @@ Page({
     this.setData({ launchMode: mode })
   },
   confirmLaunch() {
-    wx.showToast({
-      title: '这里接直接发起提交流程',
-      icon: 'none'
+    if (this.data.isSubmitting) return
+    const payload = {
+      source: this.data.source,
+      launchMode: this.data.launchMode,
+      topic: this.data.form.topic.trim(),
+      reason: this.data.form.reason.trim(),
+      time: this.data.form.time.trim(),
+      venue: this.data.form.venue.trim(),
+      platform: this.data.form.platform.trim(),
+      joinHint: this.data.form.joinHint.trim()
+    }
+    if (!payload.topic) {
+      wx.showToast({
+        title: '先把话题写出来',
+        icon: 'none'
+      })
+      return
+    }
+    this.setData({ isSubmitting: true })
+    backend.createLaunch(payload).then((result) => {
+      this.setData({
+        backendMode: result.mode
+      })
+      wx.showToast({
+        title: result.message,
+        icon: 'none'
+      })
+    }).finally(() => {
+      this.setData({ isSubmitting: false })
     })
   }
 })

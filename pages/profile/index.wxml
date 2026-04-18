@@ -4,19 +4,8 @@
       <text class="profile-banner__eyebrow">计划良渚</text>
       <text class="profile-banner__title">我的</text>
     </view>
-    <view class="profile-switch">
-      <view class="profile-switch__item {{activeTab === 'saved' ? 'profile-switch__item--active' : ''}}" data-tab="saved" bindtap="switchTab">
-        <text class="profile-switch__eyebrow">Saved</text>
-        <text class="profile-switch__label">好的</text>
-      </view>
-      <view class="profile-switch__item {{activeTab === 'launch' ? 'profile-switch__item--active' : ''}}" data-tab="launch" bindtap="switchTab">
-        <text class="profile-switch__eyebrow">Launch</text>
-        <text class="profile-switch__label">发起</text>
-      </view>
-    </view>
   </nav-shell>
 
-  <block wx:if="{{activeTab === 'saved'}}">
   <view class="profile-hero">
     <view class="profile-avatar">
       <text class="profile-avatar__initial">{{user.initial}}</text>
@@ -95,39 +84,6 @@
       </view>
     </view>
   </view>
-  </block>
-
-  <block wx:else>
-    <view class="launch-panel">
-      <view class="event-head">
-        <view>
-          <text class="event-head__eyebrow">START SOMETHING</text>
-          <text class="event-head__title">发起</text>
-          <text class="event-head__copy">先发出第一场，再慢慢长出后面的关系和机制。</text>
-        </view>
-      </view>
-
-      <view class="entry-grid">
-        <view class="entry-card entry-card--unlock" bindtap="openLaunchDraft">
-          <view class="entry-card__content">
-            <text class="entry-card__eyebrow">Launch card</text>
-            <text class="entry-card__title">直接发起一场见面</text>
-            <text class="entry-card__copy">先定时间、人数和大致方式，把第一场发出去。</text>
-            <view class="entry-card__button">去填写</view>
-          </view>
-        </view>
-
-        <view class="entry-card entry-card--cobuild" bindtap="openAiEntry">
-          <view class="entry-card__content">
-            <text class="entry-card__eyebrow">Draft with AI</text>
-            <text class="entry-card__title">从一句话整理成卡片</text>
-            <text class="entry-card__copy">如果你只有一个模糊想法，也可以先丢一句进去。</text>
-            <view class="entry-card__button">开始整理</view>
-          </view>
-        </view>
-      </view>
-    </view>
-  </block>
 <view wx:if="{{showIdeaComposer}}" class="event-modal-mask" bindtap="closeIdeaComposer">
   <view class="event-modal-sheet" catchtap="">
     <view class="event-modal-sheet__handle"></view>

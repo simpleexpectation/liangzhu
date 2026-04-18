@@ -1,0 +1,49 @@
+<view class="page-shell quadrant-demo-page {{pageReady ? 'page-ready' : ''}}">
+  <view class="quadrant-demo-page__glow quadrant-demo-page__glow--a"></view>
+  <view class="quadrant-demo-page__glow quadrant-demo-page__glow--b"></view>
+
+  <nav-shell eyebrow="Concept demo">
+    <view class="quadrant-demo-nav">
+      <view class="quadrant-demo-nav__back" bindtap="goBack">‹</view>
+      <view class="quadrant-demo-nav__copy">
+        <text class="quadrant-demo-nav__title">四象限开场</text>
+        <text class="quadrant-demo-nav__sub">纯展示版，不接任何流程。</text>
+      </view>
+    </view>
+  </nav-shell>
+
+  <view class="quadrant-demo-stage">
+    <view
+      class="quadrant-demo {{selectedQuadrant ? 'quadrant-demo--focused' : ''}} {{selectedQuadrant === 'tonight' ? 'quadrant-demo--focused-tonight' : ''}} {{selectedQuadrant === 'liangzhu' ? 'quadrant-demo--focused-liangzhu' : ''}} {{selectedQuadrant === 'meet' ? 'quadrant-demo--focused-meet' : ''}} {{selectedQuadrant === 'mine' ? 'quadrant-demo--focused-mine' : ''}}"
+    >
+      <view
+        wx:for="{{quadrants}}"
+        wx:key="key"
+        class="quadrant-demo__panel quadrant-demo__panel--{{item.key}} {{selectedQuadrant === item.key ? 'quadrant-demo__panel--active' : ''}} {{selectedQuadrant && selectedQuadrant !== item.key ? 'quadrant-demo__panel--muted' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="chooseQuadrant"
+      >
+        <text class="quadrant-demo__eyebrow">{{item.eyebrow}}</text>
+        <text class="quadrant-demo__word">{{item.word}}</text>
+        <text class="quadrant-demo__copy">{{item.copy}}</text>
+      </view>
+
+      <view class="quadrant-demo__center {{selectedQuadrant ? 'quadrant-demo__center--hidden' : ''}}">
+        <text class="quadrant-demo__center-eyebrow">Tonight in Liangzhu</text>
+        <text class="quadrant-demo__center-title">今晚良渚见一面</text>
+        <text class="quadrant-demo__center-copy">点击任意一角，感受一句话如何把整个屏幕接管。</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="quadrant-demo-caption">
+    <text class="quadrant-demo-caption__eyebrow">Current feeling</text>
+    <text class="quadrant-demo-caption__title">{{currentTitle}}</text>
+    <text class="quadrant-demo-caption__copy">{{currentCopy}}</text>
+  </view>
+
+  <view class="quadrant-demo-actions">
+    <view class="quadrant-demo-actions__ghost" bindtap="resetSelection">重看一次</view>
+    <view class="quadrant-demo-actions__primary" bindtap="cycleSelection">下一种感觉</view>
+  </view>
+</view>

@@ -5,6 +5,37 @@ const tabs = [
   { text: '我的', pagePath: '/pages/profile/index', icon: '我' }
 ]
 
+const terrainQuadrants = [
+  {
+    key: 'tonight',
+    word: '今晚',
+    eyebrow: 'Tonight',
+    title: '像今晚忽然被点亮',
+    copy: '偏电光黄的地表像刚被一颗星砸亮，整块空气都开始发热。'
+  },
+  {
+    key: 'liangzhu',
+    word: '良渚',
+    eyebrow: 'Liangzhu',
+    title: '像一块发光水域展开',
+    copy: '青绿和湖蓝向外漫开，像地点本身从地底升上来。'
+  },
+  {
+    key: 'meet',
+    word: '见面',
+    eyebrow: 'Meet',
+    title: '像动作把人拉近',
+    copy: '热橙和珊瑚红碰撞起来，像“见面”这件事先于内容发生。'
+  },
+  {
+    key: 'mine',
+    word: '我的',
+    eyebrow: 'Mine',
+    title: '像把自我这一角掀开',
+    copy: '偏洋红的土地在最后一角发亮，让整句话带上一点主观温度。'
+  }
+]
+
 const promptChips = ['最近的状态', '想聊的方向', '一个问题', '今天的感受']
 
 const defaultDraft = '我最近想聊聊 AI 为什么一边让人更高效，一边也更疲惫。'
@@ -54,7 +85,13 @@ Component({
     launchModeField: 'platform',
     launchModeValue: '',
     launchModePlaceholder: '微信群 / 线上房间',
-    launchJoinCopy: '开放加入'
+    launchJoinCopy: '开放加入',
+    starfieldOpen: false,
+    starfieldPhase: '',
+    selectedTerrain: '',
+    terrainQuadrants,
+    terrainTitle: '',
+    terrainCopy: ''
   },
   methods: {
     noop() {},
@@ -67,7 +104,12 @@ Component({
         hidden: !!hidden,
         showFab,
         composerOpen: false,
-        launchSheetOpen: false
+        launchSheetOpen: false,
+        starfieldOpen: false,
+        starfieldPhase: '',
+        selectedTerrain: '',
+        terrainTitle: '',
+        terrainCopy: ''
       })
     },
     setHidden(hidden) {
@@ -88,7 +130,67 @@ Component({
     closeOverlay() {
       this.setData({
         composerOpen: false,
-        launchSheetOpen: false
+        launchSheetOpen: false,
+        starfieldOpen: false,
+        starfieldPhase: '',
+        selectedTerrain: '',
+        terrainTitle: '',
+        terrainCopy: ''
+      })
+    },
+    openStarfield() {
+      if (this.data.starfieldOpen) return
+      this.setData({
+        composerOpen: false,
+        launchSheetOpen: false,
+        starfieldOpen: true,
+        starfieldPhase: 'impact',
+        selectedTerrain: '',
+        terrainTitle: '',
+        terrainCopy: ''
+      })
+
+      setTimeout(() => {
+        this.setData({
+          starfieldPhase: 'open',
+          terrainTitle: '四块土地已经展开',
+          terrainCopy: '现在不是选功能，而是在选你想从哪种气候进入这句话。'
+        })
+      }, 520)
+    },
+    closeStarfield() {
+      this.setData({
+        starfieldPhase: 'closing'
+      })
+
+      setTimeout(() => {
+        this.setData({
+          starfieldOpen: false,
+          starfieldPhase: '',
+          selectedTerrain: '',
+          terrainTitle: '',
+          terrainCopy: ''
+        })
+      }, 260)
+    },
+    chooseTerrain(e) {
+      const { key } = e.currentTarget.dataset || {}
+      const next = terrainQuadrants.find((item) => item.key === key)
+      if (!next) return
+      this.setData({
+        selectedTerrain: next.key,
+        terrainTitle: next.title,
+        terrainCopy: next.copy
+      })
+    },
+    cycleTerrain() {
+      const currentIndex = terrainQuadrants.findIndex((item) => item.key === this.data.selectedTerrain)
+      const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % terrainQuadrants.length : 0
+      const next = terrainQuadrants[nextIndex]
+      this.setData({
+        selectedTerrain: next.key,
+        terrainTitle: next.title,
+        terrainCopy: next.copy
       })
     },
     updateDraft(e) {
@@ -181,7 +283,12 @@ Component({
         selected: index,
         showFab,
         composerOpen: false,
-        launchSheetOpen: false
+        launchSheetOpen: false,
+        starfieldOpen: false,
+        starfieldPhase: '',
+        selectedTerrain: '',
+        terrainTitle: '',
+        terrainCopy: ''
       })
       wx.switchTab({ url: path })
     }

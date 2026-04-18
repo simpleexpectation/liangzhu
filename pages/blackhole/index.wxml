@@ -1,160 +1,103 @@
 <view class="blackhole-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
-  <view wx:if="{{presencePhase !== 'during'}}" class="presence-shell presence-shell--light">
+  <view class="presence-shell presence-shell--light">
     <view class="presence-shell__glow presence-shell__glow--a"></view>
     <view class="presence-shell__glow presence-shell__glow--b"></view>
     <view class="presence-top-offset" style="height: {{statusBarHeight + 24}}px;"></view>
-    <view class="places-banner">
-      <text class="places-banner__eyebrow">PLACES</text>
-      <text class="places-banner__label">地点</text>
-    </view>
-    <scroll-view scroll-y class="presence-section-scroll presence-section-scroll--single">
-      <view class="presence-spaces">
-        <view class="venue-page-head venue-page-head--presence">
-          <text class="venue-page-head__eyebrow">Today in spaces</text>
+
+    <nav-shell compact>
+      <view class="presence-subtabs">
+        <view class="presence-subtabs__item {{activeSubtab === 'places' ? 'presence-subtabs__item--active' : ''}}" data-tab="places" bindtap="switchSubtab">
+          <text class="presence-subtabs__eyebrow">PLACES</text>
+          <text class="presence-subtabs__label">地点</text>
         </view>
+        <view class="presence-subtabs__item {{activeSubtab === 'people' ? 'presence-subtabs__item--active' : ''}}" data-tab="people" bindtap="switchSubtab">
+          <text class="presence-subtabs__eyebrow">GOOD PEOPLE</text>
+          <text class="presence-subtabs__label">好人</text>
+        </view>
+      </view>
+    </nav-shell>
 
-        <view class="venue-list">
-          <view
-            wx:for="{{venues}}"
-            wx:key="id"
-            class="venue-stage"
-            data-id="{{item.id}}"
-            bindtap="goVenueDetail"
-          >
-            <view class="venue-stage__head">
-              <text class="venue-stage__caption">{{item.caption}}</text>
-            </view>
+    <scroll-view scroll-y class="presence-section-scroll presence-section-scroll--single">
+      <block wx:if="{{activeSubtab === 'places'}}">
+        <view class="presence-spaces">
+          <view class="venue-page-head venue-page-head--presence">
+            <text class="venue-page-head__eyebrow">Today in spaces</text>
+          </view>
 
-            <view class="venue-stage__card venue-stage__card--{{index}}">
-              <view class="venue-stage__glow"></view>
-              <view class="venue-stage__body">
-                <text class="venue-stage__eyebrow">{{item.dateCopy}}</text>
-                <text class="venue-stage__title">{{item.name}}</text>
-                <text class="venue-stage__copy">{{item.mood}}</text>
-                <view class="venue-stage__meta">
-                  <text class="venue-stage__meta-pill">{{item.discount}}</text>
-                  <text class="venue-stage__meta-pill">{{item.presence}}</text>
+          <view class="venue-list">
+            <view
+              wx:for="{{venues}}"
+              wx:key="id"
+              class="venue-stage"
+              data-id="{{item.id}}"
+              bindtap="goVenueDetail"
+            >
+              <view class="venue-stage__head">
+                <text class="venue-stage__caption">{{item.caption}}</text>
+              </view>
+
+              <view class="venue-stage__card venue-stage__card--{{index}}">
+                <view class="venue-stage__glow"></view>
+                <view class="venue-stage__body">
+                  <text class="venue-stage__eyebrow">{{item.dateCopy}}</text>
+                  <text class="venue-stage__title">{{item.name}}</text>
+                  <text class="venue-stage__copy">{{item.mood}}</text>
+                  <view class="venue-stage__meta">
+                    <text class="venue-stage__meta-pill">{{item.discount}}</text>
+                    <text class="venue-stage__meta-pill">{{item.presence}}</text>
+                  </view>
                 </view>
               </view>
             </view>
-          </view>
 
-          <view class="venue-recommend-entry" bindtap="openVenueRecommend">
-            <view class="venue-recommend-entry__glow"></view>
-            <text class="venue-recommend-entry__eyebrow">Co-create a space</text>
-            <text class="venue-recommend-entry__title">推荐空间</text>
-            <text class="venue-recommend-entry__copy">如果你知道一个适合真实对话发生的地方，也可以推荐给我们。通过官方审核后，它会进入正式空间列表。</text>
-            <view class="venue-recommend-entry__footer">
-              <text class="venue-recommend-entry__meta">用户推荐 · 官方审核后上线</text>
-              <view class="venue-recommend-entry__action">去推荐 →</view>
+            <view class="venue-recommend-entry" bindtap="openVenueRecommend">
+              <view class="venue-recommend-entry__glow"></view>
+              <text class="venue-recommend-entry__eyebrow">Co-create a space</text>
+              <text class="venue-recommend-entry__title">推荐空间</text>
+              <text class="venue-recommend-entry__copy">如果你知道一个适合真实对话发生的地方，也可以推荐给我们。通过官方审核后，它会进入正式空间列表。</text>
+              <view class="venue-recommend-entry__footer">
+                <text class="venue-recommend-entry__meta">用户推荐 · 官方审核后上线</text>
+                <view class="venue-recommend-entry__action">去推荐 →</view>
+              </view>
             </view>
           </view>
         </view>
-      </view>
+      </block>
+
+      <block wx:else>
+        <view class="good-people-shell">
+          <view class="presence-page-head good-people-head">
+            <text class="presence-page-head__copy">先看见不同的人，再决定你想和谁真正见一面。</text>
+          </view>
+          <view class="meet-feed">
+            <view wx:for="{{goodPeopleRows}}" wx:key="id" class="meet-row">
+              <view
+                wx:if="{{item.left}}"
+                class="meet-person-card meet-person-card--left meet-person-card--{{item.left.tone}} meet-person-card--offset-{{item.left.offset}}"
+                data-person-id="{{item.left.personId}}"
+                bindtap="openPerson"
+              >
+                <text class="meet-person-card__name">{{item.left.name}}</text>
+                <text class="meet-person-card__line">{{item.left.line}}</text>
+                <text class="meet-person-card__title">{{item.left.title}}</text>
+                <text class="meet-person-card__quote">{{item.left.quote}}</text>
+              </view>
+
+              <view
+                wx:if="{{item.right}}"
+                class="meet-person-card meet-person-card--right meet-person-card--{{item.right.tone}} meet-person-card--offset-{{item.right.offset}}"
+                data-person-id="{{item.right.personId}}"
+                bindtap="openPerson"
+              >
+                <text class="meet-person-card__name">{{item.right.name}}</text>
+                <text class="meet-person-card__line">{{item.right.line}}</text>
+                <text class="meet-person-card__title">{{item.right.title}}</text>
+                <text class="meet-person-card__quote">{{item.right.quote}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
     </scroll-view>
-  </view>
-
-  <view wx:if="{{presencePhase === 'during'}}" class="immersive-scene">
-    <view class="immersive-scene__veil immersive-scene__veil--top"></view>
-    <view class="immersive-scene__veil immersive-scene__veil--bottom"></view>
-    <view class="immersive-scene__grain"></view>
-    <view class="immersive-back" bindtap="exitImmersive">返回</view>
-    <view class="immersive-scene__ambient immersive-scene__ambient--a"></view>
-    <view class="immersive-scene__ambient immersive-scene__ambient--b"></view>
-    <view class="immersive-scene__ambient immersive-scene__ambient--c"></view>
-
-    <view class="immersive-meteor immersive-meteor--1"></view>
-    <view class="immersive-meteor immersive-meteor--2"></view>
-    <view class="immersive-meteor immersive-meteor--3"></view>
-    <view class="immersive-meteor immersive-meteor--4"></view>
-    <view class="immersive-meteor immersive-meteor--5"></view>
-
-    <view class="immersive-copy">
-      <view class="immersive-copy__line immersive-copy__line--cn immersive-copy__shadow immersive-copy__shadow--cn">
-        <text
-          wx:for="{{immersiveCopyCn}}"
-          wx:key="index"
-          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
-          style="animation-delay: {{item.delay}};"
-        >{{item.glyph}}</text>
-      </view>
-      <view class="immersive-copy__line immersive-copy__line--cn immersive-copy__title immersive-copy__title--cn">
-        <text
-          wx:for="{{immersiveCopyCn}}"
-          wx:key="index"
-          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
-          style="animation-delay: {{item.delay}};"
-        >{{item.glyph}}</text>
-      </view>
-      <view class="immersive-copy__line immersive-copy__line--en immersive-copy__shadow immersive-copy__shadow--en">
-        <text
-          wx:for="{{immersiveCopyEn}}"
-          wx:key="index"
-          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
-          style="animation-delay: {{item.delay}};"
-        >{{item.glyph}}</text>
-      </view>
-      <view class="immersive-copy__line immersive-copy__line--en immersive-copy__title immersive-copy__title--en">
-        <text
-          wx:for="{{immersiveCopyEn}}"
-          wx:key="index"
-          class="immersive-copy__glyph {{item.isSpace ? 'immersive-copy__glyph--space' : ''}}"
-          style="animation-delay: {{item.delay}};"
-        >{{item.glyph}}</text>
-      </view>
-    </view>
-
-    <view class="immersive-minibar">
-      <view class="immersive-minibar__end" bindtap="completeSession">结束活动</view>
-    </view>
-  </view>
-</view>
-
-<view wx:if="{{enteringImmersive}}" class="presence-entry">
-  <view class="presence-entry__glow presence-entry__glow--a"></view>
-  <view class="presence-entry__glow presence-entry__glow--b"></view>
-  <view class="presence-entry__panel">
-    <text class="presence-entry__eyebrow">正在进入在场</text>
-    <text class="presence-entry__title">让屏幕慢一点</text>
-    <text class="presence-entry__copy">真实的交流，正在前面等你。</text>
-  </view>
-</view>
-
-<view wx:if="{{showRosterSheet}}" class="presence-sheet" bindtap="closeRosterSheet">
-  <view class="presence-sheet__panel presence-sheet__panel--roster" catchtap="">
-    <view class="presence-sheet__handle"></view>
-    <text class="presence-sheet__label">数字名片</text>
-    <text class="presence-sheet__title">与当前对话相关的人</text>
-    <text class="presence-sheet__meta">这里再慢慢看，不必在首页一次性看完。</text>
-
-    <view class="presence-cards__grid">
-      <view wx:for="{{attendeeCards}}" wx:key="id" class="presence-card presence-card--{{item.accent}}">
-        <text class="presence-card__name">{{item.name}}</text>
-        <text class="presence-card__line">{{item.line}}</text>
-        <text class="presence-card__expectation">{{item.expectation}}</text>
-      </view>
-    </view>
-  </view>
-</view>
-
-<view wx:if="{{showPassSheet}}" class="presence-sheet" bindtap="closePassSheet">
-  <view class="presence-sheet__panel" catchtap="">
-    <view class="presence-sheet__handle"></view>
-    <text class="presence-sheet__label">入场票据</text>
-    <text class="presence-sheet__title">{{presenceEvent.title}}</text>
-    <text class="presence-sheet__meta">{{presenceEvent.schedule}} · {{presenceEvent.venue}}</text>
-
-    <view class="presence-pass__qr">
-      <view wx:for="{{qrMatrix}}" wx:key="index" class="presence-pass__qr-row">
-        <view
-          wx:for="{{item}}"
-          wx:key="index"
-          class="presence-pass__qr-cell {{item ? 'presence-pass__qr-cell--solid' : ''}}"
-        ></view>
-      </view>
-    </view>
-
-    <text class="presence-sheet__hint">{{presenceEvent.qrHint}}</text>
-    <view class="cta-button cta-button--light" bindtap="closePassSheet">收起</view>
   </view>
 </view>

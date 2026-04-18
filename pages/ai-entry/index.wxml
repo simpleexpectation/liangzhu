@@ -2,6 +2,34 @@
   <view class="ai-entry-page__glow ai-entry-page__glow--a"></view>
   <view class="ai-entry-page__glow ai-entry-page__glow--b"></view>
 
+  <view
+    wx:if="{{showQuadrantIntro}}"
+    class="quadrant-entry {{quadrantLeaving ? 'quadrant-entry--leaving' : ''}} {{selectedQuadrant ? 'quadrant-entry--focused' : ''}} {{selectedQuadrant === 'tonight' ? 'quadrant-entry--focused-tonight' : ''}} {{selectedQuadrant === 'liangzhu' ? 'quadrant-entry--focused-liangzhu' : ''}} {{selectedQuadrant === 'meet' ? 'quadrant-entry--focused-meet' : ''}} {{selectedQuadrant === 'mine' ? 'quadrant-entry--focused-mine' : ''}}"
+  >
+    <view class="quadrant-entry__mist quadrant-entry__mist--a"></view>
+    <view class="quadrant-entry__mist quadrant-entry__mist--b"></view>
+
+    <view
+      wx:for="{{quadrantEntries}}"
+      wx:key="key"
+      class="quadrant-entry__panel quadrant-entry__panel--{{item.key}} {{selectedQuadrant === item.key ? 'quadrant-entry__panel--active' : ''}} {{selectedQuadrant ? (selectedQuadrant !== item.key ? 'quadrant-entry__panel--muted' : '') : ''}}"
+      data-key="{{item.key}}"
+      bindtap="chooseQuadrant"
+    >
+      <text class="quadrant-entry__eyebrow">{{item.eyebrow}}</text>
+      <text class="quadrant-entry__word">{{item.word}}</text>
+      <text class="quadrant-entry__panel-copy">{{item.title}}</text>
+    </view>
+
+    <view class="quadrant-entry__center">
+      <text class="quadrant-entry__center-eyebrow">Tonight in Liangzhu</text>
+      <text class="quadrant-entry__center-title">今晚良渚见一面</text>
+      <text class="quadrant-entry__center-copy">先选一个你想从哪里进入这句话。</text>
+    </view>
+
+    <view class="quadrant-entry__skip" bindtap="skipQuadrantIntro">直接进入</view>
+  </view>
+
   <nav-shell eyebrow="Launch entry">
     <view class="ai-entry-nav">
       <view class="ai-entry-nav__back" bindtap="goBack">‹</view>
@@ -18,8 +46,8 @@
 
     <view class="ai-entry-composer__head">
       <view class="ai-entry-composer__copy">
-        <text class="ai-entry-composer__title">从一句最近的想法开始</text>
-        <text class="ai-entry-composer__sub">一个方向、一个问题，或者今天 lingering 的感受。</text>
+        <text class="ai-entry-composer__title">{{entryToneTitle}}</text>
+        <text class="ai-entry-composer__sub">{{entryToneSub}}</text>
       </view>
       <view class="ai-entry-composer__record">◉</view>
     </view>

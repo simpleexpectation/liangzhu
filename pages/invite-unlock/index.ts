@@ -1,3 +1,5 @@
+const backend = require('../../lib/backend/index') as typeof import('../../lib/backend/index')
+
 const unlockSlots = [
   { key: 'self', label: '你自己', status: '已点亮', active: true },
   { key: 'friend-a', label: '好友 #1', status: '等待中', active: false },
@@ -37,6 +39,7 @@ Page({
     ],
     unlockSlots,
     cobuildSlots,
+    backendMode: 'mock',
     unlockFriends: [
       { initial: 'M', name: 'Mia', note: '你们上次在「城市游牧」话题中相遇' },
       { initial: 'A', name: 'Aki', note: '她最近也在关注如何把焦虑说完整' }
@@ -46,12 +49,20 @@ Page({
       { initial: 'L', name: '良渚在地发起者', note: '适合一起把良渚区域里的同频关系带进来' }
     ]
   },
-  onLoad(query: Record<string, string>) {
+  async onLoad(query: Record<string, string>) {
     const systemInfo = wx.getSystemInfoSync()
+    const membership = await backend.fetchMembershipOverview()
+    const invite = await backend.fetchInviteStatus()
     this.setData({
       source: query.source || 'profile',
       mode: query.mode === 'cobuild' ? 'cobuild' : 'unlock',
-      statusBarHeight: systemInfo.statusBarHeight || 20
+      statusBarHeight: systemInfo.statusBarHeight || 20,
+      quota: membership.quota,
+      inviteCode: invite.inviteCode,
+      membershipBenefits: membership.membershipBenefitsByPlan.month || this.data.membershipBenefits,
+      cobuildBenefits: membership.cobuildBenefits,
+      unlockSlots: invite.unlockSlots,
+      backendMode: membership.mode === 'cloud' || invite.mode === 'cloud' ? 'cloud' : 'mock'
     })
   },
   onShow() {

@@ -255,6 +255,11 @@ Page({
     })
   },
   openLaunchDraft() {
+    const tabBar = this.getTabBar && this.getTabBar()
+    if (tabBar && tabBar.toggleComposer) {
+      tabBar.toggleComposer()
+      return
+    }
     wx.navigateTo({ url: '/pages/direct-launch/index' })
   },
   openAiEntry() {

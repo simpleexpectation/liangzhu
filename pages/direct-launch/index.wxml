@@ -30,7 +30,7 @@
       <text class="launch-card__copy">系统已经先替你起好一版。现在只要补足必要信息，就可以把它发出去。</text>
 
       <view class="launch-card__grid">
-        <view class="launch-card__cell launch-card__cell--wide">
+        <view class="launch-card__cell launch-card__cell--wide launch-card__cell--title">
           <text class="launch-card__label">话题</text>
           <textarea
             class="launch-card__textarea launch-card__textarea--title {{textareasReady ? '' : 'launch-card__textarea--locked'}} {{textareasReady ? '' : 'launch-card__textarea--title-locked'}}"
@@ -38,21 +38,27 @@
             data-field="topic"
             bindinput="updateField"
             maxlength="80"
-            auto-height="{{textareasReady}}"
+            auto-height="{{false}}"
+            show-confirm-bar="{{false}}"
+            hold-keyboard="{{true}}"
+            disable-default-padding="{{true}}"
             placeholder="这次想聊什么"
             placeholder-class="launch-card__placeholder"
           />
         </view>
 
-        <view class="launch-card__cell launch-card__cell--wide">
+        <view class="launch-card__cell launch-card__cell--wide launch-card__cell--reason">
           <text class="launch-card__label">描述</text>
           <textarea
-            class="launch-card__textarea {{textareasReady ? '' : 'launch-card__textarea--locked'}}"
+            class="launch-card__textarea launch-card__textarea--reason {{textareasReady ? '' : 'launch-card__textarea--locked'}}"
             value="{{form.reason}}"
             data-field="reason"
             bindinput="updateField"
             maxlength="180"
-            auto-height="{{textareasReady}}"
+            auto-height="{{false}}"
+            show-confirm-bar="{{false}}"
+            hold-keyboard="{{true}}"
+            disable-default-padding="{{true}}"
             placeholder="为什么值得聊，别人为什么会想加入"
             placeholder-class="launch-card__placeholder"
           />

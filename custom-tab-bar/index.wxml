@@ -1,5 +1,39 @@
 <view wx:if="{{!hidden}}" class="tab-bar">
-  <view wx:if="{{composerOpen || launchSheetOpen}}" class="tab-bar__mask" bindtap="closeOverlay" catchtouchmove="noop"></view>
+  <view wx:if="{{composerOpen || launchSheetOpen || starfieldOpen}}" class="tab-bar__mask" bindtap="closeOverlay" catchtouchmove="noop"></view>
+
+  <view wx:if="{{starfieldOpen}}" class="tab-bar__starfield tab-bar__starfield--{{starfieldPhase}}">
+    <view class="tab-bar__starfield-impact"></view>
+    <view class="tab-bar__starfield-shock tab-bar__starfield-shock--a"></view>
+    <view class="tab-bar__starfield-shock tab-bar__starfield-shock--b"></view>
+    <view class="tab-bar__terrain-frame">
+      <view class="tab-bar__terrain-rift tab-bar__terrain-rift--v"></view>
+      <view class="tab-bar__terrain-rift tab-bar__terrain-rift--h"></view>
+
+      <view
+        wx:for="{{terrainQuadrants}}"
+        wx:key="key"
+        class="tab-bar__terrain tab-bar__terrain--{{item.key}} {{selectedTerrain === item.key ? 'tab-bar__terrain--active' : ''}} {{selectedTerrain && selectedTerrain !== item.key ? 'tab-bar__terrain--muted' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="chooseTerrain"
+      >
+        <view class="tab-bar__terrain-shade"></view>
+        <text class="tab-bar__terrain-eyebrow">{{item.eyebrow}}</text>
+        <text class="tab-bar__terrain-word">{{item.word}}</text>
+      </view>
+
+    </view>
+
+    <view wx:if="{{terrainTitle || terrainCopy}}" class="tab-bar__terrain-caption">
+      <text class="tab-bar__terrain-caption-eyebrow">Current terrain</text>
+      <text wx:if="{{terrainTitle}}" class="tab-bar__terrain-caption-title">{{terrainTitle}}</text>
+      <text wx:if="{{terrainCopy}}" class="tab-bar__terrain-caption-copy">{{terrainCopy}}</text>
+    </view>
+
+    <view class="tab-bar__terrain-actions">
+      <view class="tab-bar__terrain-action tab-bar__terrain-action--ghost" catchtap="closeStarfield">收起星星</view>
+      <view class="tab-bar__terrain-action tab-bar__terrain-action--primary" catchtap="cycleTerrain">切换一块地</view>
+    </view>
+  </view>
 
   <view wx:if="{{composerOpen}}" class="tab-bar__composer" catchtap="noop" catchtouchmove="noop">
     <view class="tab-bar__composer-head">
@@ -116,7 +150,7 @@
   <view wx:if="{{showFab}}" class="tab-bar__fab" bindtap="toggleComposer">
     <text class="tab-bar__fab-icon">+</text>
   </view>
-  <view class="tab-bar__rail">
+  <view class="tab-bar__rail {{starfieldOpen ? 'tab-bar__rail--hidden' : ''}}">
     <view
       wx:for="{{tabs}}"
       wx:key="pagePath"
@@ -127,6 +161,9 @@
     >
       <text class="tab-bar__icon">{{item.icon}}</text>
       <text class="tab-bar__text">{{item.text}}</text>
+    </view>
+    <view class="tab-bar__star" bindtap="openStarfield">
+      <view class="tab-bar__star-core">★</view>
     </view>
   </view>
 </view>
