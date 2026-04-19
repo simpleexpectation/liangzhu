@@ -18,7 +18,13 @@
       >
         <view class="tab-bar__terrain-shade"></view>
         <text class="tab-bar__terrain-eyebrow">{{item.eyebrow}}</text>
-        <text class="tab-bar__terrain-word">{{item.word}}</text>
+        <block wx:if="{{confirmedQuadrantCopy[item.key]}}">
+          <view class="tab-bar__terrain-confirmed">
+            <text class="tab-bar__terrain-confirmed-line tab-bar__terrain-confirmed-line--primary">{{confirmedQuadrantCopy[item.key].line1}}</text>
+            <text wx:if="{{confirmedQuadrantCopy[item.key].line2}}" class="tab-bar__terrain-confirmed-line tab-bar__terrain-confirmed-line--secondary">{{confirmedQuadrantCopy[item.key].line2}}</text>
+          </view>
+        </block>
+        <text wx:else class="tab-bar__terrain-word">{{item.word}}</text>
       </view>
 
     </view>
@@ -29,17 +35,172 @@
       <text wx:if="{{terrainCopy}}" class="tab-bar__terrain-caption-copy">{{terrainCopy}}</text>
     </view>
 
-    <view class="tab-bar__terrain-actions">
-      <view class="tab-bar__terrain-action tab-bar__terrain-action--ghost" catchtap="closeStarfield">收起星星</view>
-      <view class="tab-bar__terrain-action tab-bar__terrain-action--primary" catchtap="cycleTerrain">切换一块地</view>
+    <view wx:if="{{activeLaunchPanel}}" class="tab-bar__launch-picker" catchtap="noop">
+      <view class="tab-bar__launch-picker-head">
+        <view class="tab-bar__launch-picker-close" catchtap="closeLaunchPanel">×</view>
+      </view>
+
+      <block wx:if="{{activeLaunchPanel === 'tonight'}}">
+        <view class="tab-bar__launch-picker-section">
+          <view class="tab-bar__launch-picker-wheelbox">
+            <scroll-view scroll-y show-scrollbar="{{false}}" class="tab-bar__launch-picker-scroll" data-source="timeScopes" data-field="timeScope" data-value-key="value" data-item-height="94" bindscroll="handlePickerScroll">
+              <view class="tab-bar__launch-picker-track">
+                <view
+                  wx:for="{{timeScopes}}"
+                  wx:key="value"
+                  class="tab-bar__launch-choice {{launchDraft.timeScope === item.value ? 'tab-bar__launch-choice--active' : ''}} {{item.locked ? 'tab-bar__launch-choice--locked' : ''}}"
+                  data-field="timeScope"
+                  data-value="{{item.value}}"
+                  data-locked="{{item.locked}}"
+                  bindtap="updateLaunchChoice"
+                >
+                  <text>{{item.label}}</text>
+                  <text wx:if="{{item.badge}}" class="tab-bar__launch-choice-badge">{{item.badge}}</text>
+                </view>
+              </view>
+            </scroll-view>
+            <view class="tab-bar__launch-picker-axis"></view>
+          </view>
+        </view>
+
+        <view class="tab-bar__launch-picker-section">
+          <view class="tab-bar__launch-picker-wheelbox">
+            <scroll-view scroll-y show-scrollbar="{{false}}" class="tab-bar__launch-picker-scroll" data-source="timeSlots" data-field="timeSlot" data-value-key="value" data-item-height="94" bindscroll="handlePickerScroll">
+              <view class="tab-bar__launch-picker-track">
+                <view
+                  wx:for="{{timeSlots}}"
+                  wx:key="value"
+                  class="tab-bar__launch-choice {{launchDraft.timeSlot === item.value ? 'tab-bar__launch-choice--active' : ''}}"
+                  data-field="timeSlot"
+                  data-value="{{item.value}}"
+                  bindtap="updateLaunchChoice"
+                >
+                  {{item.label}}
+                </view>
+              </view>
+            </scroll-view>
+            <view class="tab-bar__launch-picker-axis"></view>
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{activeLaunchPanel === 'liangzhu'}}">
+        <view class="tab-bar__launch-picker-section">
+          <view class="tab-bar__launch-picker-wheelbox tab-bar__launch-picker-wheelbox--venues">
+            <scroll-view scroll-y show-scrollbar="{{false}}" class="tab-bar__launch-picker-scroll tab-bar__launch-picker-scroll--venues" data-source="venueChoices" data-field="venue" data-value-key="name" data-item-height="124" bindscroll="handlePickerScroll">
+              <view class="tab-bar__launch-picker-track">
+                <view
+                  wx:for="{{venueChoices}}"
+                  wx:key="name"
+                  class="tab-bar__launch-venue {{launchDraft.venue === item.name ? 'tab-bar__launch-venue--active' : ''}}"
+                  data-field="venue"
+                  data-value="{{item.name}}"
+                  bindtap="updateLaunchChoice"
+                >
+                  <text class="tab-bar__launch-venue-name">{{item.name}}</text>
+                  <text class="tab-bar__launch-venue-mood">{{item.mood}}</text>
+                </view>
+              </view>
+            </scroll-view>
+            <view class="tab-bar__launch-picker-axis tab-bar__launch-picker-axis--venues"></view>
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{activeLaunchPanel === 'meet'}}">
+        <view class="tab-bar__launch-picker-section">
+          <view class="tab-bar__launch-picker-wheelbox">
+            <scroll-view scroll-y show-scrollbar="{{false}}" class="tab-bar__launch-picker-scroll" data-source="formChoices" data-field="form" data-value-key="value" data-item-height="94" bindscroll="handlePickerScroll">
+              <view class="tab-bar__launch-picker-track">
+                <view
+                  wx:for="{{formChoices}}"
+                  wx:key="value"
+                  class="tab-bar__launch-choice {{launchDraft.form === item.value ? 'tab-bar__launch-choice--active' : ''}}"
+                  data-field="form"
+                  data-value="{{item.value}}"
+                  bindtap="updateLaunchChoice"
+                >
+                  {{item.label}}
+                </view>
+              </view>
+            </scroll-view>
+            <view class="tab-bar__launch-picker-axis"></view>
+          </view>
+        </view>
+
+        <view class="tab-bar__launch-picker-section">
+          <view class="tab-bar__launch-picker-wheelbox tab-bar__launch-picker-wheelbox--short">
+            <scroll-view scroll-y show-scrollbar="{{false}}" class="tab-bar__launch-picker-scroll tab-bar__launch-picker-scroll--short" data-source="capacityChoices" data-field="capacity" data-value-key="value" data-item-height="94" bindscroll="handlePickerScroll">
+              <view class="tab-bar__launch-picker-track">
+                <view
+                  wx:for="{{capacityChoices}}"
+                  wx:key="value"
+                  class="tab-bar__launch-choice {{launchDraft.capacity === item.value ? 'tab-bar__launch-choice--active' : ''}}"
+                  data-field="capacity"
+                  data-value="{{item.value}}"
+                  bindtap="updateLaunchChoice"
+                >
+                  {{item.label}}
+                </view>
+              </view>
+            </scroll-view>
+            <view class="tab-bar__launch-picker-axis"></view>
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{activeLaunchPanel === 'mine'}}">
+        <view class="tab-bar__launch-picker-section">
+          <text class="tab-bar__launch-picker-label">一句主题</text>
+          <textarea
+            class="tab-bar__launch-picker-textarea tab-bar__launch-picker-textarea--short"
+            value="{{launchDraft.topic}}"
+            data-field="topic"
+            bindinput="updateLaunchDraftText"
+            maxlength="15"
+            auto-height="{{false}}"
+            show-confirm-bar="{{false}}"
+            disable-default-padding="{{true}}"
+            placeholder="比如：想聊聊 AI 之后的疲惫感"
+            placeholder-class="tab-bar__launch-picker-placeholder"
+          />
+        </view>
+
+        <view class="tab-bar__launch-picker-section">
+          <text class="tab-bar__launch-picker-label">详细描述（可选）</text>
+          <textarea
+            class="tab-bar__launch-picker-textarea"
+            value="{{launchDraft.description}}"
+            data-field="description"
+            bindinput="updateLaunchDraftText"
+            maxlength="500"
+            auto-height="{{false}}"
+            show-confirm-bar="{{false}}"
+            disable-default-padding="{{true}}"
+            placeholder="补充一点背景、细节或你真正想聊的东西。"
+            placeholder-class="tab-bar__launch-picker-placeholder"
+          />
+        </view>
+      </block>
+
+      <view class="tab-bar__launch-picker-actions">
+        <view class="tab-bar__launch-picker-pill tab-bar__launch-picker-pill--ghost" catchtap="closeLaunchPanel">返回</view>
+        <view class="tab-bar__launch-picker-pill tab-bar__launch-picker-pill--solid" catchtap="switchLaunchPanel">换一块地</view>
+        <view class="tab-bar__launch-picker-pill tab-bar__launch-picker-pill--solid" catchtap="confirmLaunchSelection">确认</view>
+      </view>
+    </view>
+
+    <view wx:if="{{!activeLaunchPanel}}" class="tab-bar__terrain-actions">
+      <view class="tab-bar__terrain-action tab-bar__terrain-action--ghost" catchtap="closeStarfield">收起火光</view>
+      <view class="tab-bar__terrain-action tab-bar__terrain-action--primary" catchtap="confirmQuadrantLaunch">升起篝火</view>
     </view>
   </view>
 
   <view wx:if="{{composerOpen}}" class="tab-bar__composer" catchtap="noop" catchtouchmove="noop">
     <view class="tab-bar__composer-head">
       <view class="tab-bar__composer-copy">
-        <text class="tab-bar__composer-title">分享一点最近的状态</text>
-        <text class="tab-bar__composer-sub">先给一句线索，我们把它收成一张可以发起的对话卡。</text>
+        <text class="tab-bar__composer-title">先留下一点火种</text>
+        <text class="tab-bar__composer-sub">先给一句线索，我们把它收成一张可以升起篝火的对话卡。</text>
       </view>
       <view class="tab-bar__composer-close" catchtap="closeComposer">×</view>
     </view>
@@ -68,9 +229,9 @@
   <view wx:if="{{launchSheetOpen}}" class="tab-bar__launch-sheet" catchtap="noop" catchtouchmove="noop">
     <view class="tab-bar__launch-sheet-head">
       <view class="tab-bar__launch-sheet-copy">
-        <text class="tab-bar__launch-sheet-eyebrow">Launch Card</text>
-        <text class="tab-bar__launch-sheet-title">这张对话卡已经成形</text>
-        <text class="tab-bar__launch-sheet-sub">现在只要补几个必要信息，就可以发出去。</text>
+        <text class="tab-bar__launch-sheet-eyebrow">Campfire Card</text>
+        <text class="tab-bar__launch-sheet-title">这束篝火已经成形</text>
+        <text class="tab-bar__launch-sheet-sub">现在只要补几个必要信息，就可以把它点起来。</text>
       </view>
       <view class="tab-bar__launch-sheet-close" catchtap="closeLaunchSheet">×</view>
     </view>
@@ -143,12 +304,12 @@
 
     <view class="tab-bar__launch-actions">
       <view class="tab-bar__launch-secondary" catchtap="backToComposer">返回修改</view>
-      <view class="tab-bar__launch-primary" catchtap="confirmLaunch">确认发起</view>
+      <view class="tab-bar__launch-primary" catchtap="confirmLaunch">升起篝火</view>
     </view>
   </view>
 
-  <view wx:if="{{showFab}}" class="tab-bar__fab" bindtap="toggleComposer">
-    <text class="tab-bar__fab-icon">+</text>
+  <view wx:if="{{showFab}}" class="tab-bar__fab" bindtap="openStarfield">
+    <image class="tab-bar__fire-icon tab-bar__fire-icon--fab" mode="aspectFit" src="/assets/firelight/fire-simple-c.png" />
   </view>
   <view class="tab-bar__rail {{starfieldOpen ? 'tab-bar__rail--hidden' : ''}}">
     <view
@@ -161,9 +322,6 @@
     >
       <text class="tab-bar__icon">{{item.icon}}</text>
       <text class="tab-bar__text">{{item.text}}</text>
-    </view>
-    <view class="tab-bar__star" bindtap="openStarfield">
-      <view class="tab-bar__star-core">★</view>
     </view>
   </view>
 </view>

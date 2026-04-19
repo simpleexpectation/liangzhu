@@ -2,7 +2,6 @@
   <view class="presence-shell presence-shell--light">
     <view class="presence-shell__glow presence-shell__glow--a"></view>
     <view class="presence-shell__glow presence-shell__glow--b"></view>
-    <view class="presence-top-offset" style="height: {{statusBarHeight + 24}}px;"></view>
 
     <nav-shell compact>
       <view class="presence-subtabs">
@@ -37,14 +36,16 @@
               </view>
 
               <view class="venue-stage__card venue-stage__card--{{index}}">
+                <image class="venue-stage__image" src="{{item.heroImage}}" mode="aspectFill" />
+                <view class="venue-stage__shade"></view>
                 <view class="venue-stage__glow"></view>
                 <view class="venue-stage__body">
-                  <text class="venue-stage__eyebrow">{{item.dateCopy}}</text>
+                  <text class="venue-stage__eyebrow">{{item.cluster}}</text>
                   <text class="venue-stage__title">{{item.name}}</text>
                   <text class="venue-stage__copy">{{item.mood}}</text>
                   <view class="venue-stage__meta">
-                    <text class="venue-stage__meta-pill">{{item.discount}}</text>
-                    <text class="venue-stage__meta-pill">{{item.presence}}</text>
+                    <text class="venue-stage__meta-pill">适合：{{item.bestFor}}</text>
+                    <text class="venue-stage__meta-pill">{{item.timePreference}}</text>
                   </view>
                 </view>
               </view>

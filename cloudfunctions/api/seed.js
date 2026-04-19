@@ -1,34 +1,205 @@
 const venues = [
   {
-    id: 'venue-kuangye',
-    name: '敞开酒馆',
-    caption: '适合慢下来说真话',
-    mood: '适合慢下来说真话',
-    discount: '会员 8.5 折',
-    presence: '在店 11 人'
+    id: 'venue-xinglab',
+    name: '醒Lab',
+    caption: '大屋顶里的创意咖啡点',
+    mood: '适合从展览或散步切进一场慢聊',
+    heroImage: 'https://images.adsttc.com/media/images/5b44/90e2/f197/cc4b/e400/00aa/large_jpg',
+    cluster: '大屋顶',
+    vibe: '偏创意、留白多、适合两个人坐下来把话说开',
+    bestFor: '慢聊',
+    timePreference: '白天到傍晚',
+    addressHint: '大屋顶一带',
+    sourceStatus: 'confirmed_by_user'
   },
   {
-    id: 'venue-boguang',
-    name: '泊光集',
-    caption: '适合深夜反刍与复盘',
-    mood: '适合深夜反刍与复盘',
-    discount: '赠热饮一杯',
-    presence: '在店 7 人'
+    id: 'venue-starbucks',
+    name: '星巴克',
+    caption: '最稳妥的第一次见面入口',
+    mood: '适合低压力碰头，先坐下再决定聊多深',
+    heroImage: 'https://dimg04.tripcdn.com/images/100l190000017khtx6FC5_C_1280_420_R5_Q90_Mtg_7.jpg',
+    cluster: '玉鸟集',
+    vibe: '熟悉、稳定、不容易出错',
+    bestFor: '第一次见面',
+    timePreference: '全天',
+    addressHint: '玉鸟集主街区',
+    sourceStatus: 'confirmed_by_user'
   },
   {
-    id: 'venue-cat',
-    name: '猫客厅',
-    caption: '适合轻松破冰与漫谈',
-    mood: '适合轻松破冰与漫谈',
-    discount: '会员专属入场',
-    presence: '在店 14 人'
+    id: 'venue-wufei',
+    name: '无非coffee',
+    caption: '暖村门口的社区型第三空间',
+    mood: '适合熟一点的人慢慢坐，也适合朋友带朋友',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141730youfang48.jpg',
+    cluster: '暖村',
+    vibe: '社区感强，更像自然发生的会客点',
+    bestFor: '熟人复见',
+    timePreference: '下午',
+    addressHint: '暖村入口附近',
+    sourceStatus: 'confirmed_by_user'
+  },
+  {
+    id: 'venue-manner',
+    name: 'Manner Coffee',
+    caption: '适合快速约起的一杯咖啡',
+    mood: '适合临时碰头，也适合把第一次见面压低门槛',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141634youfang59.jpg',
+    cluster: '玉鸟集',
+    vibe: '效率高、节奏快、见面成本低',
+    bestFor: '快速碰头',
+    timePreference: '全天',
+    addressHint: '玉鸟集主街区',
+    sourceStatus: 'public_confirmed'
+  },
+  {
+    id: 'venue-villager',
+    name: '村民咖啡',
+    caption: '大屋顶附近更轻松的坐聊点',
+    mood: '适合先绕一圈再坐下，比较自然地打开话题',
+    heroImage: 'https://dimg04.tripcdn.com/images/100q070000002j8rr42B6_C_W_640_0_R5_Q90.jpg',
+    cluster: '大屋顶',
+    vibe: '轻松、松弛、有一点在地感',
+    bestFor: '散步后续聊',
+    timePreference: '下午到傍晚',
+    addressHint: '良渚文化艺术中心附近',
+    sourceStatus: 'public_confirmed'
+  },
+  {
+    id: 'venue-off-space',
+    name: 'Off space',
+    caption: '偏独立气质的小店',
+    mood: '适合创作者局，也适合想把状态说细一点的人',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141657youfang20.jpg',
+    cluster: '玉鸟集',
+    vibe: '独立、轻审美、适合慢下来',
+    bestFor: '创作者聊天',
+    timePreference: '下午',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-linburan',
+    name: '林不染',
+    caption: '更安静一点的双人见面点',
+    mood: '适合不想太闹的人，把语速自然放慢',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141652youfang4.jpg',
+    cluster: '玉鸟集',
+    vibe: '克制、安静、适合细聊',
+    bestFor: '双人慢聊',
+    timePreference: '白天',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-yishe',
+    name: 'Yishe',
+    caption: '轻生活方式感的坐聊点',
+    mood: '适合刚认识的人先聊感觉，不必马上聊很重的话题',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141709youfang9.jpg',
+    cluster: '玉鸟集',
+    vibe: '轻盈、好进入、没有压迫感',
+    bestFor: '轻松破冰',
+    timePreference: '下午',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-emoment',
+    name: 'Emoment',
+    caption: '适合一对一认真聊',
+    mood: '更适合把那种还没完全想明白的感觉慢慢说出来',
+    heroImage: 'https://www.yuhang.gov.cn/picture/-1/250320113546176510.jpg',
+    cluster: '玉鸟集',
+    vibe: '偏情绪感、适合有一点真诚浓度的对话',
+    bestFor: '一对一深聊',
+    timePreference: '傍晚',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-suman',
+    name: 'SU&MAN',
+    caption: '适合三人以内的小局',
+    mood: '朋友带朋友的时候比较自然，不会一下子太正式',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141706youfang16.jpg',
+    cluster: '玉鸟集',
+    vibe: '年轻、轻松、适合小范围松弛社交',
+    bestFor: '小组见面',
+    timePreference: '下午到晚上',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-qingka',
+    name: '青咖墨茶',
+    caption: '咖啡和茶都能坐得住的点',
+    mood: '适合不完全是咖啡人群，也适合白天见面',
+    heroImage: 'https://loftcn.com/wp-content/uploads/2023/08/jzsdkfg-15.jpg',
+    cluster: '玉鸟集',
+    vibe: '更东方一点，也更柔和',
+    bestFor: '白天见面',
+    timePreference: '白天',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-green',
+    name: '绿.',
+    caption: '适合短暂停留的轻见面点',
+    mood: '适合先见到人，确认感觉，再决定要不要继续坐下去',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141803youfang83.jpg',
+    cluster: '玉鸟集',
+    vibe: '清爽、短停、像一个会合点',
+    bestFor: '短见面',
+    timePreference: '白天到傍晚',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-bajiaobei',
+    name: '八角杯咖啡',
+    caption: '功能性很强的基础见面点',
+    mood: '适合先约起来，别把第一次见面想得太复杂',
+    heroImage: 'https://dimg04.tripcdn.com/images/100i1f000001gqt7a2CE4_C_W_640_0_R5_Q90.jpg',
+    cluster: '玉鸟集',
+    vibe: '稳、直给、好约',
+    bestFor: '第一次见面',
+    timePreference: '全天',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'needs_field_check'
+  },
+  {
+    id: 'venue-hangyimo',
+    name: '杭一末',
+    caption: '更有主理人感的社群型空间',
+    mood: '适合从共同生活方式切进去，而不是一上来就谈很重的问题',
+    heroImage: 'https://www.yuhang.gov.cn/picture/-1/250320113546123055.jpg',
+    cluster: '玉鸟集',
+    vibe: '社群感、主理人气质、适合熟人引荐',
+    bestFor: '朋友带朋友',
+    timePreference: '下午',
+    addressHint: '玉鸟集片区',
+    sourceStatus: 'public_confirmed'
+  },
+  {
+    id: 'venue-cloud',
+    name: '云端咖啡',
+    caption: '适合傍晚坐一会儿再慢慢聊',
+    mood: '更适合带一点余味的见面，不用太赶时间',
+    heroImage: 'https://image.archiposition.com/2023/08/20230803141628youfang76.jpg',
+    cluster: '春漫里',
+    vibe: '柔和、傍晚感、适合复见',
+    bestFor: '傍晚慢聊',
+    timePreference: '傍晚到晚上',
+    addressHint: '春漫里片区',
+    sourceStatus: 'needs_field_check'
   }
 ]
 
 const topics = [
   {
     id: 'topic-1',
-    venueId: 'venue-kuangye',
+    venueId: 'venue-xinglab',
     dateKey: '2026-03-20',
     monthLabel: '3月',
     dayLabel: '20',
@@ -47,7 +218,7 @@ const topics = [
   },
   {
     id: 'topic-2',
-    venueId: 'venue-boguang',
+    venueId: 'venue-starbucks',
     dateKey: '2026-03-21',
     monthLabel: '3月',
     dayLabel: '21',
@@ -66,7 +237,7 @@ const topics = [
   },
   {
     id: 'topic-3',
-    venueId: 'venue-cat',
+    venueId: 'venue-wufei',
     dateKey: '2026-03-22',
     monthLabel: '3月',
     dayLabel: '22',
@@ -486,6 +657,69 @@ const presenceRooms = [
   }
 ]
 
+const blackholePeople = [
+  {
+    id: 'good-person-1',
+    personId: 'person-qingyuan',
+    name: '青原',
+    line: '一个正在研究哲学的程序员',
+    title: '我开始允许自己慢下来',
+    quote: '先承认自己已经太久没有停下来了。',
+    tone: 'mist',
+    offset: 0
+  },
+  {
+    id: 'good-person-2',
+    personId: 'person-momo',
+    name: 'Momo',
+    line: '做城市策展，也在学习慢一点生活',
+    title: '没有产出的时刻，也算活着',
+    quote: '很多时候不是没有答案，而是太快了。',
+    tone: 'peach',
+    offset: 1
+  },
+  {
+    id: 'good-person-3',
+    personId: 'person-aki',
+    name: 'Aki',
+    line: '拍纪录片，也写诗',
+    title: '一句话，也可以成为见面的起点',
+    quote: '不是所有重要的事都要说得很大声。',
+    tone: 'sand',
+    offset: 2
+  },
+  {
+    id: 'good-person-4',
+    personId: 'person-lynn',
+    name: 'Lynn',
+    line: '在练习更松弛地创作',
+    title: '我想重新定义努力和表达',
+    quote: '先把状态摆在这里，再慢慢决定往哪走。',
+    tone: 'sky',
+    offset: 3
+  },
+  {
+    id: 'good-person-5',
+    personId: 'person-xiaoyue',
+    name: '小越',
+    line: '产品设计师，最近在重建节奏',
+    title: '失控以后，我想慢慢回来',
+    quote: '现在更想把日子过回自己的手里。',
+    tone: 'rose',
+    offset: 0
+  },
+  {
+    id: 'good-person-6',
+    personId: 'person-nora',
+    name: 'Nora',
+    line: '一个做播客的观察者',
+    title: '我想把模糊的感受说轻一点',
+    quote: '先不急着判断，先把那一点真感受留住。',
+    tone: 'ivory',
+    offset: 1
+  }
+]
+
 const defaultUser = {
   id: 'demo-user',
   name: 'Lynn',
@@ -518,6 +752,7 @@ module.exports = {
   cobuildBenefits,
   inviteUnlockSlots,
   attendeeCards,
+  blackholePeople,
   presenceEvent,
   presenceConversations,
   presenceRooms,

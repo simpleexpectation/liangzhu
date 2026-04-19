@@ -29,16 +29,96 @@ const terrainQuadrants = [
   },
   {
     key: 'mine',
-    word: '我的',
-    eyebrow: 'Mine',
+    word: '主题',
+    eyebrow: 'Topic',
     title: '像把自我这一角掀开',
     copy: '偏洋红的土地在最后一角发亮，让整句话带上一点主观温度。'
   }
 ]
 
+const timeScopes = [
+  { label: '今晚', value: '今晚', locked: false },
+  { label: '本周', value: '本周', locked: true, badge: '会员' }
+]
+
+const timeSlots = [
+  { label: '5:00-7:00', value: '5:00-7:00' },
+  { label: '7:00-9:00', value: '7:00-9:00' },
+  { label: '9:00 以后', value: '9:00 以后' },
+  { label: '其他时间', value: '其他时间' }
+]
+
+const venueChoices = [
+  { name: '泊光集', mood: '适合安静认真聊' },
+  { name: '敞开酒馆', mood: '适合晚一点松弛聊' },
+  { name: '猫客厅', mood: '适合轻松破冰' },
+  { name: '香蕉小院', mood: '适合下午到黄昏' },
+  { name: '好逢小屋', mood: '适合熟人感' },
+  { name: '旷野公社', mood: '适合新想法碰撞' },
+  { name: '良渚食堂', mood: '适合边吃边聊' },
+  { name: '玉鸟咖啡', mood: '适合 Coffee Chat' },
+  { name: '溪边长椅', mood: '适合散步后坐会儿' },
+  { name: '村口小馆', mood: '适合临时起局' }
+]
+
+const formChoices = [
+  { label: 'Coffee Chat', value: 'Coffee Chat' },
+  { label: '吃饭', value: '吃饭' },
+  { label: '散步', value: '散步' },
+  { label: '随便坐坐', value: '随便坐坐' },
+  { label: '其他形式', value: '其他形式' }
+]
+
+const capacityChoices = [
+  { label: '限 4 人', value: '限 4 人' },
+  { label: '限 6 人', value: '限 6 人' }
+]
+
 const promptChips = ['最近的状态', '想聊的方向', '一个问题', '今天的感受']
 
 const defaultDraft = '我最近想聊聊 AI 为什么一边让人更高效，一边也更疲惫。'
+
+const truncateText = (text, maxLength) => {
+  const raw = (text || '').trim()
+  if (!raw) return ''
+  return raw.length > maxLength ? `${raw.slice(0, maxLength)}...` : raw
+}
+
+const splitTerrainText = (text, firstLineMax = 8) => {
+  const raw = (text || '').trim()
+  if (!raw) {
+    return {
+      line1: '',
+      line2: ''
+    }
+  }
+  if (raw.length <= firstLineMax) {
+    return {
+      line1: raw,
+      line2: ''
+    }
+  }
+  return {
+    line1: raw.slice(0, firstLineMax),
+    line2: raw.slice(firstLineMax)
+  }
+}
+
+const buildConfirmedQuadrantCopy = (draft) => ({
+  tonight: {
+    line1: draft.timeScope,
+    line2: draft.timeSlot
+  },
+  liangzhu: {
+    line1: draft.venue,
+    line2: ''
+  },
+  meet: {
+    line1: draft.form,
+    line2: draft.capacity
+  },
+  mine: splitTerrainText(truncateText(draft.topic || '输入主题', 24), 7)
+})
 
 const buildAutofillPayload = (draft) => {
   const raw = (draft || '').trim() || defaultDraft
@@ -91,7 +171,23 @@ Component({
     selectedTerrain: '',
     terrainQuadrants,
     terrainTitle: '',
-    terrainCopy: ''
+    terrainCopy: '',
+    activeLaunchPanel: '',
+    timeScopes,
+    timeSlots,
+    venueChoices,
+    formChoices,
+    capacityChoices,
+    launchDraft: {
+      timeScope: '今晚',
+      timeSlot: '7:00-9:00',
+      venue: '泊光集',
+      form: 'Coffee Chat',
+      capacity: '限 4 人',
+      topic: '',
+      description: ''
+    },
+    confirmedQuadrantCopy: {}
   },
   methods: {
     noop() {},
@@ -109,7 +205,8 @@ Component({
         starfieldPhase: '',
         selectedTerrain: '',
         terrainTitle: '',
-        terrainCopy: ''
+        terrainCopy: '',
+        activeLaunchPanel: ''
       })
     },
     setHidden(hidden) {
@@ -135,7 +232,8 @@ Component({
         starfieldPhase: '',
         selectedTerrain: '',
         terrainTitle: '',
-        terrainCopy: ''
+        terrainCopy: '',
+        activeLaunchPanel: ''
       })
     },
     openStarfield() {
@@ -147,14 +245,15 @@ Component({
         starfieldPhase: 'impact',
         selectedTerrain: '',
         terrainTitle: '',
-        terrainCopy: ''
+        terrainCopy: '',
+        activeLaunchPanel: ''
       })
 
       setTimeout(() => {
         this.setData({
           starfieldPhase: 'open',
-          terrainTitle: '四块土地已经展开',
-          terrainCopy: '现在不是选功能，而是在选你想从哪种气候进入这句话。'
+          terrainTitle: '',
+          terrainCopy: ''
         })
       }, 520)
     },
@@ -169,7 +268,8 @@ Component({
           starfieldPhase: '',
           selectedTerrain: '',
           terrainTitle: '',
-          terrainCopy: ''
+          terrainCopy: '',
+          activeLaunchPanel: ''
         })
       }, 260)
     },
@@ -179,18 +279,82 @@ Component({
       if (!next) return
       this.setData({
         selectedTerrain: next.key,
-        terrainTitle: next.title,
-        terrainCopy: next.copy
+        terrainTitle: '',
+        terrainCopy: '',
+        activeLaunchPanel: next.key
       })
     },
-    cycleTerrain() {
-      const currentIndex = terrainQuadrants.findIndex((item) => item.key === this.data.selectedTerrain)
-      const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % terrainQuadrants.length : 0
-      const next = terrainQuadrants[nextIndex]
+    closeLaunchPanel() {
       this.setData({
-        selectedTerrain: next.key,
-        terrainTitle: next.title,
-        terrainCopy: next.copy
+        activeLaunchPanel: '',
+        selectedTerrain: ''
+      })
+    },
+    switchLaunchPanel() {
+      const currentIndex = terrainQuadrants.findIndex((item) => item.key === this.data.activeLaunchPanel)
+      const next = terrainQuadrants[(currentIndex + 1 + terrainQuadrants.length) % terrainQuadrants.length]
+      this.setData({
+        activeLaunchPanel: next.key,
+        selectedTerrain: next.key
+      })
+    },
+    confirmLaunchSelection() {
+      const confirmedQuadrantCopy = buildConfirmedQuadrantCopy(this.data.launchDraft)
+      this.setData({
+        confirmedQuadrantCopy,
+        activeLaunchPanel: '',
+        selectedTerrain: '',
+        terrainTitle: '',
+        terrainCopy: ''
+      })
+      wx.showToast({
+        title: '已更新四块内容',
+        icon: 'none'
+      })
+    },
+    updateLaunchChoice(e) {
+      const { field, value, locked } = e.currentTarget.dataset || {}
+      if (!field || !value) return
+      if (locked === true || locked === 'true') {
+        wx.showToast({
+          title: '会员可以提前升起本周的篝火',
+          icon: 'none'
+        })
+        return
+      }
+      this.setData({
+        [`launchDraft.${field}`]: value
+      })
+    },
+    handlePickerScroll(e) {
+      const { source, field, valueKey, itemHeight } = e.currentTarget.dataset || {}
+      if (!source || !field || !valueKey) return
+      const list = this.data[source] || []
+      if (!list.length) return
+      clearTimeout(this.pickerScrollTimer)
+      const scrollTop = e.detail.scrollTop || 0
+      this.pickerScrollTimer = setTimeout(() => {
+        const height = Number(itemHeight) || 94
+        const index = Math.max(0, Math.min(list.length - 1, Math.round(scrollTop / height)))
+        const next = list[index]
+        if (!next || next.locked) return
+        this.setData({
+          [`launchDraft.${field}`]: next[valueKey]
+        })
+      }, 120)
+    },
+    updateLaunchDraftText(e) {
+      const { field } = e.currentTarget.dataset || {}
+      if (!field) return
+      this.setData({
+        [`launchDraft.${field}`]: e.detail.value
+      })
+    },
+    confirmQuadrantLaunch() {
+      const draft = this.data.launchDraft
+      wx.showToast({
+        title: `这束火会在 ${draft.timeScope} ${draft.timeSlot} 升起`,
+        icon: 'none'
       })
     },
     updateDraft(e) {
@@ -268,7 +432,7 @@ Component({
     },
     confirmLaunch() {
       wx.showToast({
-        title: '这里接直接发起提交流程',
+        title: '这里接升起篝火提交流程',
         icon: 'none'
       })
       this.setData({
@@ -288,7 +452,8 @@ Component({
         starfieldPhase: '',
         selectedTerrain: '',
         terrainTitle: '',
-        terrainCopy: ''
+        terrainCopy: '',
+        activeLaunchPanel: ''
       })
       wx.switchTab({ url: path })
     }

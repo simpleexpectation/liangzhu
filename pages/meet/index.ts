@@ -204,6 +204,14 @@ Page({
     }
   },
   createMoment() {
-    wx.showToast({ title: '下一步接入“自我事件”', icon: 'none' })
+    const currentId = this.data.selectedConversationId
+    if (!currentId) return
+    backend.createMomentFromConversation(currentId).then((result: any) => {
+      this.setData({ backendMode: result.mode })
+      wx.showToast({ title: result.message, icon: 'none' })
+      if (result.event && result.event.id) {
+        wx.navigateTo({ url: `/pages/event-detail/index?id=${result.event.id}&source=profile` })
+      }
+    })
   }
 })

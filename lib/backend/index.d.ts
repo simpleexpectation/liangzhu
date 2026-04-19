@@ -13,11 +13,12 @@ export interface Venue {
   caption: string
   mood: string
   heroImage?: string
-  discount: string
-  presence: string
-  monthLabel: string
-  dayLabel: string
-  dateCopy: string
+  cluster: string
+  vibe: string
+  bestFor: string
+  timePreference: string
+  addressHint: string
+  sourceStatus: string
 }
 
 export interface TopicParticipant {
@@ -75,6 +76,16 @@ export interface PersonProfile {
   location: string
   tags: string[]
   connectionHint: string
+}
+
+export interface GoodPersonCard {
+  id: string
+  personId: string
+  name: string
+  line: string
+  title: string
+  quote: string
+  tone: string
 }
 
 export interface MembershipPlan {
@@ -198,11 +209,43 @@ export function fetchPersonProfile(id: string): Promise<{
   visibleEvents: ProfileEvent[]
   error?: unknown
 }>
+export function fetchVenueDetail(id: string): Promise<{
+  mode: 'cloud' | 'mock'
+  venue: Venue
+  venueTopics: Topic[]
+  venueTodayMood: string
+  error?: unknown
+}>
+export function fetchBlackholeOverview(): Promise<{
+  mode: 'cloud' | 'mock'
+  venues: Venue[]
+  goodPeople: GoodPersonCard[]
+  goodPeopleRows: Array<{ id: string; left: GoodPersonCard | null; right: GoodPersonCard | null }>
+  error?: unknown
+}>
+export function submitVenueRecommendation(payload?: { venueName?: string; note?: string }): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
+  error?: unknown
+}>
 export function fetchMembershipOverview(): Promise<MembershipOverview & { mode: 'cloud' | 'mock'; error?: unknown }>
 export function fetchInviteStatus(): Promise<{
   mode: 'cloud' | 'mock'
   inviteCode: string
   unlockSlots: InviteSlot[]
+  error?: unknown
+}>
+export function rsvpEvent(payload?: { id?: string; source?: string }): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
+  error?: unknown
+}>
+export function pinEvent(payload?: { id?: string; source?: string }): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
   error?: unknown
 }>
 export function createLaunch(payload: {
@@ -252,5 +295,12 @@ export function completePresenceConversation(id: string): Promise<{
   ok: boolean
   message: string
   conversation?: PresenceConversation
+  error?: unknown
+}>
+export function createMomentFromConversation(id: string): Promise<{
+  mode: 'cloud' | 'mock'
+  ok: boolean
+  message: string
+  event?: any
   error?: unknown
 }>

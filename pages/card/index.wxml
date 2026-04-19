@@ -41,20 +41,6 @@
             <view class="topic-film-card__mist topic-film-card__mist--a"></view>
             <view class="topic-film-card__mist topic-film-card__mist--b"></view>
 
-            <view class="topic-film-card__scene">
-              <view class="topic-film-card__people-stack">
-                <view
-                  wx:for="{{attendeeCards}}"
-                  wx:key="id"
-                  wx:for-item="person"
-                  class="topic-film-card__person-card topic-film-card__person-card--{{index}}"
-                >
-                  <text class="topic-film-card__person-name">{{person.name}}</text>
-                  <text class="topic-film-card__person-line">{{person.line}}</text>
-                </view>
-              </view>
-            </view>
-
             <view class="topic-film-card__body">
               <text class="topic-film-card__title">{{item.title}}</text>
               <view class="topic-film-card__footer-cluster">
@@ -76,17 +62,17 @@
 
           <view class="launch-home">
             <view class="launch-home__head">
-              <text class="launch-home__eyebrow">Start something</text>
-              <text class="launch-home__title">发起</text>
-              <text class="launch-home__copy">不必先把机制想得很完整，先把第一场发出去。</text>
+              <text class="launch-home__eyebrow">Raise a fire</text>
+              <text class="launch-home__title">升起篝火</text>
+              <text class="launch-home__copy">不必先把机制想得很完整，先把第一束火点起来。</text>
             </view>
 
             <view class="launch-home__grid">
               <view class="launch-home__card launch-home__card--primary" bindtap="openLaunchDraft">
-                <text class="launch-home__card-eyebrow">Launch card</text>
-                <text class="launch-home__card-title">直接发起一场见面</text>
-                <text class="launch-home__card-copy">先定时间、人数和方式，把这场见面发出去。</text>
-                <view class="launch-home__card-action">去填写</view>
+                <text class="launch-home__card-eyebrow">Campfire card</text>
+                <text class="launch-home__card-title">升起一场今晚的篝火</text>
+                <text class="launch-home__card-copy">先定时间、人数和方式，把这场见面点起来。</text>
+                <view class="launch-home__card-action">去升起</view>
               </view>
             </view>
           </view>
@@ -97,24 +83,22 @@
     <swiper-item>
       <scroll-view scroll-y class="topic-section-scroll">
         <view class="topic-feed topic-feed--hero topic-feed--week">
-          <view class="week-timeline week-timeline--hero glass-panel">
-            <scroll-view scroll-x show-scrollbar="{{false}}" class="week-timeline__scroll">
-              <view class="week-timeline__track">
-                <view
-                  wx:for="{{fullCalendarDays}}"
-                  wx:key="key"
-                  class="week-timeline__dot {{selectedDateKey === item.key ? 'week-timeline__dot--active' : ''}} {{item.hasTopic ? 'week-timeline__dot--enabled' : ''}} {{pressedDateKey === item.key ? 'week-timeline__dot--pressed' : ''}}"
-                  data-key="{{item.key}}"
-                  bindtouchstart="pressCalendarDate"
-                  bindtouchend="releaseCalendarDate"
-                  bindtouchcancel="releaseCalendarDate"
-                  bindtap="selectCalendarDate"
-                >
-                  <text class="week-timeline__weekday">{{item.weekday}}</text>
-                  <text class="week-timeline__day">{{item.day}}</text>
-                </view>
+          <view class="week-timeline week-timeline--hero">
+            <view class="week-timeline__track">
+              <view
+                wx:for="{{fullCalendarDays}}"
+                wx:key="key"
+                class="week-timeline__dot {{selectedDateKey === item.key ? 'week-timeline__dot--active' : ''}} {{item.hasTopic ? 'week-timeline__dot--enabled' : ''}} {{pressedDateKey === item.key ? 'week-timeline__dot--pressed' : ''}}"
+                data-key="{{item.key}}"
+                bindtouchstart="pressCalendarDate"
+                bindtouchend="releaseCalendarDate"
+                bindtouchcancel="releaseCalendarDate"
+                bindtap="selectCalendarDate"
+              >
+                <text class="week-timeline__weekday">{{item.weekday}}</text>
+                <text class="week-timeline__day">{{item.day}}</text>
               </view>
-            </scroll-view>
+            </view>
           </view>
 
           <block wx:if="{{weekTopics.length}}">
@@ -130,20 +114,6 @@
             >
               <view class="topic-film-card__mist topic-film-card__mist--a"></view>
               <view class="topic-film-card__mist topic-film-card__mist--b"></view>
-
-              <view class="topic-film-card__scene">
-                <view class="topic-film-card__people-stack">
-                  <view
-                    wx:for="{{attendeeCards}}"
-                    wx:key="id"
-                    wx:for-item="person"
-                    class="topic-film-card__person-card topic-film-card__person-card--{{index}}"
-                  >
-                    <text class="topic-film-card__person-name">{{person.name}}</text>
-                    <text class="topic-film-card__person-line">{{person.line}}</text>
-                  </view>
-                </view>
-              </view>
 
               <view class="topic-film-card__body">
                 <text class="topic-film-card__title">{{item.title}}</text>
@@ -168,22 +138,22 @@
           <view wx:else class="week-empty glass-panel">
             <text class="week-empty__eyebrow">Nothing here yet</text>
             <text class="week-empty__title">这一天还没有名片</text>
-            <text class="week-empty__copy">你可以换一天看看，或者直接从下面发起一场新的见面。</text>
+            <text class="week-empty__copy">你可以换一天看看，或者直接从下面升起一束新的火。</text>
           </view>
 
           <view class="launch-home">
             <view class="launch-home__head">
-              <text class="launch-home__eyebrow">Start something</text>
-              <text class="launch-home__title">发起</text>
-              <text class="launch-home__copy">看到这周的卡片之后，如果你也想发一场，就从这里开始。</text>
+              <text class="launch-home__eyebrow">Raise a fire</text>
+              <text class="launch-home__title">升起篝火</text>
+              <text class="launch-home__copy">看到这周的卡片之后，如果你也想点起一束火，就从这里开始。</text>
             </view>
 
             <view class="launch-home__grid">
               <view class="launch-home__card launch-home__card--primary" bindtap="openLaunchDraft">
-                <text class="launch-home__card-eyebrow">Launch card</text>
-                <text class="launch-home__card-title">直接发起一场见面</text>
+                <text class="launch-home__card-eyebrow">Campfire card</text>
+                <text class="launch-home__card-title">升起一场今晚的篝火</text>
                 <text class="launch-home__card-copy">把第一场时间、人数和形式先定下来。</text>
-                <view class="launch-home__card-action">去填写</view>
+                <view class="launch-home__card-action">去升起</view>
               </view>
             </view>
           </view>
@@ -191,4 +161,54 @@
       </scroll-view>
     </swiper-item>
   </swiper>
+</view>
+
+<view wx:if="{{showOpening}}" class="opening-screen {{openingLeaving ? 'opening-screen--leaving' : ''}}">
+  <view class="opening-screen__flow opening-screen__flow--a"></view>
+  <view class="opening-screen__flow opening-screen__flow--b"></view>
+  <view class="opening-screen__flow opening-screen__flow--c"></view>
+  <view class="opening-screen__grain"></view>
+
+  <view wx:if="{{openingStage === 'origin'}}" class="opening-screen__copy">
+    <text class="opening-screen__line opening-screen__line--1">五千年前的良渚，</text>
+    <text class="opening-screen__line opening-screen__line--2">人们也许也是这样相遇的。</text>
+
+    <view class="opening-screen__spacer"></view>
+
+    <text class="opening-screen__line opening-screen__line--3">天黑之后，</text>
+    <text class="opening-screen__line opening-screen__line--4">有人点起火，</text>
+    <text class="opening-screen__line opening-screen__line--5">有人看见火，</text>
+    <text class="opening-screen__line opening-screen__line--6">于是走过去。</text>
+
+    <view class="opening-screen__spacer opening-screen__spacer--final"></view>
+
+    <text class="opening-screen__line opening-screen__line--7">今晚良渚见一面。</text>
+
+    <view class="opening-screen__cta" bindtap="startOpeningGuide">
+      <text>走近一点</text>
+    </view>
+  </view>
+
+  <view wx:else class="opening-screen__copy opening-guide {{openingGuideLeaving ? 'opening-guide--leaving' : ''}}">
+    <view class="opening-guide__text">
+      <block wx:for="{{currentOpeningGuide.lines}}" wx:key="index">
+        <view wx:if="{{item === ''}}" class="opening-guide__spacer"></view>
+        <text
+          wx:else
+          class="opening-screen__line opening-guide__line opening-guide__line--{{openingGuideMotion}}"
+          style="animation-delay: {{0.26 + index * 0.46}}s;"
+        >{{item}}</text>
+      </block>
+    </view>
+
+    <view class="opening-guide__button-group opening-guide__button-group--{{openingGuideMotion}}">
+      <view
+        wx:for="{{currentOpeningGuide.buttons}}"
+        wx:key="action"
+        class="opening-guide__text-button"
+        data-action="{{item.action}}"
+        bindtap="handleOpeningGuideAction"
+      >{{item.text}}</view>
+    </view>
+  </view>
 </view>

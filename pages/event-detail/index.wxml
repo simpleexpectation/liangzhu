@@ -1,11 +1,11 @@
 <view class="page-shell event-detail-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
   <block wx:if="{{detailMode === 'profile'}}">
     <view class="event-reading" style="padding-top: {{statusBarHeight + 22}}px;">
-      <text class="event-reading__eyebrow">MY EVENT</text>
+      <text class="event-reading__eyebrow">THOUGHT</text>
       <view class="event-reading__head">
         <view>
-          <text class="event-reading__title">事件详情</text>
-          <text class="event-reading__sub">这一条真实发生，正在怎样慢慢代表你</text>
+          <text class="event-reading__title">思考详情</text>
+          <text class="event-reading__sub">这一条思考，正在怎样慢慢代表一个人</text>
         </view>
       </view>
 
@@ -28,7 +28,7 @@
       </view>
 
       <view class="detail-block detail-block--soft {{pageReady ? 'detail-block--ready' : ''}}">
-        <text class="detail-block__title">它正在代表你什么</text>
+        <text class="detail-block__title">它正在代表什么</text>
         <text class="detail-block__copy">{{event.identityLens}}</text>
       </view>
 
@@ -107,8 +107,8 @@
   <view class="detail-footer__rail">
     <view class="detail-footer__back {{pressedFooterAction === 'back' ? 'detail-footer__back--pressed' : ''}}" data-action="back" bindtouchstart="pressFooterAction" bindtouchend="releaseFooterAction" bindtouchcancel="releaseFooterAction" bindtap="goBack">返回</view>
     <block wx:if="{{detailMode === 'profile'}}">
-      <view class="detail-footer__cta {{pressedFooterAction === 'primary' ? 'detail-footer__cta--pressed' : ''}}" data-action="primary" bindtouchstart="pressFooterAction" bindtouchend="releaseFooterAction" bindtouchcancel="releaseFooterAction" bindtap="goBack">回到我的</view>
-      <view class="detail-footer__ghost {{pressedFooterAction === 'ghost' ? 'detail-footer__ghost--pressed' : ''}}" data-action="ghost" bindtouchstart="pressFooterAction" bindtouchend="releaseFooterAction" bindtouchcancel="releaseFooterAction" bindtap="pinEventToCard">挂到名片</view>
+      <view class="detail-footer__cta {{pressedFooterAction === 'primary' ? 'detail-footer__cta--pressed' : ''}}" data-action="primary" bindtouchstart="pressFooterAction" bindtouchend="releaseFooterAction" bindtouchcancel="releaseFooterAction" bindtap="goBack">返回</view>
+      <view class="detail-footer__ghost {{pressedFooterAction === 'ghost' ? 'detail-footer__ghost--pressed' : ''}}" data-action="ghost" bindtouchstart="pressFooterAction" bindtouchend="releaseFooterAction" bindtouchcancel="releaseFooterAction" bindtap="pinEventToCard">保存思考</view>
     </block>
     <block wx:else>
       <view class="detail-footer__cta {{pressedFooterAction === 'primary' ? 'detail-footer__cta--pressed' : ''}}" data-action="primary" bindtouchstart="pressFooterAction" bindtouchend="releaseFooterAction" bindtouchcancel="releaseFooterAction" bindtap="openRsvpModal">实名预约</view>

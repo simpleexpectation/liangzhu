@@ -53,12 +53,30 @@ Page({
     this.setData({ showRsvpModal: false })
   },
   confirmRsvp() {
-    this.setData({ showRsvpModal: false })
-    wx.showToast({ title: '预约成功', icon: 'success', duration: 1800 })
+    const id = this.data.event && this.data.event.id
+    if (!id) return
+    backend.rsvpEvent({
+      id,
+      source: this.data.detailMode
+    }).then((result) => {
+      this.setData({
+        showRsvpModal: false,
+        backendMode: result.mode
+      })
+      wx.showToast({ title: '已在火边留位', icon: 'success', duration: 1800 })
+    })
   },
   pinEventToCard() {
     this.releaseFooterAction()
-    wx.showToast({ title: '已挂到名片', icon: 'none' })
+    const id = this.data.event && this.data.event.id
+    if (!id) return
+    backend.pinEvent({
+      id,
+      source: this.data.detailMode
+    }).then((result) => {
+      this.setData({ backendMode: result.mode })
+      wx.showToast({ title: result.message, icon: 'none' })
+    })
   },
   enterBlackhole() {
     this.releaseFooterAction()

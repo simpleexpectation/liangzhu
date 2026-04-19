@@ -23,16 +23,13 @@
 
 .person-hero {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   margin-top: 18rpx;
   margin-bottom: 30rpx;
-  padding: 30rpx 28rpx 26rpx;
-  border-radius: 40rpx;
-  background:
-    radial-gradient(circle at 82% 16%, rgba(198, 213, 255, 0.2), transparent 22%),
-    radial-gradient(circle at 18% 78%, rgba(248, 224, 168, 0.16), transparent 22%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
-  border: 1rpx solid rgba(255, 255, 255, 0.08);
+  padding: 18rpx 0 10rpx;
+  border-radius: 0;
+  background: transparent;
+  border: none;
 }
 
 .person-hero__glow {

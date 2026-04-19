@@ -2,6 +2,62 @@ const backend = require('../../lib/backend/index')
 const { attendeeCards } = require('../../data/mock')
 const stateKeywords = ['松弛', '节奏', '创作', '表达', 'AI', '关系']
 
+const openingGuidePages = [
+  {
+    key: 'review',
+    lines: [
+      '走近之前，',
+      '先让我们看见你一点。',
+      '',
+      '从自己的屋子里出来，',
+      '走到火堆边，',
+      '总要先带上一点自己。',
+      '',
+      '只要留下几条线索：',
+      '最近在想什么，',
+      '你是对哪些事物',
+      '保持着充足好奇的人。',
+      '',
+      '我们会把这些回答，',
+      '整理成你的个人信息卡。'
+    ],
+    buttons: [
+      {
+        text: '现在填写',
+        action: 'startAnswer'
+      },
+      {
+        text: '跳过以后填写',
+        action: 'skipForNow'
+      }
+    ]
+  },
+  {
+    key: 'recommend',
+    lines: [
+      '火光亮起来之后，',
+      '不用立刻走进人群。',
+      '',
+      '我们先替你找一处',
+      '适合坐下来的位置。',
+      '',
+      '也许只是几个人，',
+      '在不太吵的地方，',
+      '认真聊一会儿。',
+      '',
+      '今晚良渚，',
+      '先见一面。'
+    ],
+    action: '下一页',
+    buttons: [
+      {
+        text: '看看这场',
+        action: 'join'
+      }
+    ]
+  }
+]
+
 const sortTopicsByDate = (topics, selectedDateKey = '') => {
   const getDayValue = (dateKey) => new Date(dateKey).getTime()
   if (!selectedDateKey) {
@@ -25,6 +81,13 @@ const sortTopicsByDate = (topics, selectedDateKey = '') => {
 
 const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六']
 
+const formatDateKey = (date) => {
+  const year = date.getFullYear()
+  const month = `${date.getMonth() + 1}`.padStart(2, '0')
+  const day = `${date.getDate()}`.padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const buildVenueCards = (venues) => {
   const now = new Date()
   const monthLabel = `${now.getMonth() + 1}月`
@@ -41,12 +104,12 @@ const buildVenueCards = (venues) => {
 
 const buildCalendarDays = (topics) => {
   const topicDateSet = new Set(topics.map((item) => item.dateKey))
-  const allDates = [...topicDateSet].sort()
-  const startDate = allDates.length ? new Date(allDates[0]) : new Date()
-  const sourceDates = Array.from({ length: 14 }, (_, index) => {
-    const date = new Date(startDate)
-    date.setDate(startDate.getDate() + index)
-    return date.toISOString().slice(0, 10)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const sourceDates = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(today)
+    date.setDate(today.getDate() + index)
+    return formatDateKey(date)
   })
 
   return sourceDates.map((dateKey) => {
@@ -114,12 +177,28 @@ Page({
     backendMode: 'mock',
     isLoading: true,
     pageReady: false,
-    pageLeaving: false
+    pageLeaving: false,
+    showOpening: false,
+    openingLeaving: false,
+    openingStage: 'origin',
+    openingGuideLeaving: false,
+    openingGuideMotion: 'a',
+    openingGuideIndex: 0,
+    openingGuidePages,
+    currentOpeningGuide: openingGuidePages[0]
   },
+  openingTimer: 0,
   async onShow() {
-    this.showTabBar()
+    this.prepareOpening()
+    this.syncHomeTabBar()
     await this.loadDiscoveryFeed()
     this.enterPage()
+  },
+  onHide() {
+    this.clearOpeningTimer()
+  },
+  onUnload() {
+    this.clearOpeningTimer()
   },
   async loadDiscoveryFeed() {
     const result = await backend.fetchDiscoveryFeed()
@@ -148,10 +227,112 @@ Page({
       this.setData({ pageReady: true })
     }, 20)
   },
-  showTabBar() {
+  syncHomeTabBar() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar && tabBar.sync) {
       tabBar.sync('/pages/card/index', false)
+    }
+  },
+  prepareOpening() {
+    this.clearOpeningTimer()
+    const app = getApp<IAppOption>()
+    if (app && app.globalData && app.globalData.openingSeenInSession) {
+      this.setData({
+        showOpening: false,
+        openingLeaving: false,
+        openingGuideLeaving: false
+      })
+      return
+    }
+    this.setData({
+      showOpening: true,
+      openingLeaving: false,
+      openingStage: 'origin',
+      openingGuideLeaving: false,
+      openingGuideMotion: 'a',
+      openingGuideIndex: 0,
+      currentOpeningGuide: openingGuidePages[0]
+    })
+  },
+  clearOpeningTimer() {
+    if (!this.openingTimer) return
+    clearTimeout(this.openingTimer)
+    this.openingTimer = 0
+  },
+  enterHome() {
+    if (this.data.openingLeaving) return
+    this.clearOpeningTimer()
+    const app = getApp<IAppOption>()
+    if (app && app.globalData) {
+      app.globalData.openingSeenInSession = true
+    }
+    this.setData({ openingLeaving: true })
+    setTimeout(() => {
+      this.setData({ showOpening: false, openingLeaving: false })
+    }, 520)
+  },
+  startOpeningGuide() {
+    this.clearOpeningTimer()
+    this.setData({
+      openingStage: 'guide',
+      openingGuideLeaving: false,
+      openingGuideMotion: 'a',
+      openingGuideIndex: 0,
+      currentOpeningGuide: openingGuidePages[0]
+    })
+  },
+  transitionOpeningGuide(nextIndex) {
+    if (nextIndex === this.data.openingGuideIndex || this.data.openingGuideLeaving) return
+    const nextMotion = this.data.openingGuideMotion === 'a' ? 'b' : 'a'
+    this.setData({ openingGuideLeaving: true })
+    setTimeout(() => {
+      this.setData({
+        openingGuideIndex: nextIndex,
+        currentOpeningGuide: openingGuidePages[nextIndex],
+        openingGuideMotion: nextMotion,
+        openingGuideLeaving: false
+      })
+    }, 560)
+  },
+  closeOpeningThen(callback) {
+    if (this.data.openingLeaving) return
+    this.clearOpeningTimer()
+    const app = getApp<IAppOption>()
+    if (app && app.globalData) {
+      app.globalData.openingSeenInSession = true
+    }
+    this.setData({
+      openingLeaving: true,
+      openingGuideLeaving: true
+    })
+    setTimeout(() => {
+      this.setData({ showOpening: false, openingLeaving: false, openingGuideLeaving: false })
+      if (typeof callback === 'function') callback()
+    }, 520)
+  },
+  handleOpeningGuideAction(e) {
+    const { action } = e.currentTarget.dataset
+    if (action === 'skipForNow') {
+      this.enterHome()
+      return
+    }
+    if (action === 'startAnswer') {
+      this.transitionOpeningGuide(1)
+      return
+    }
+    if (action === 'join') {
+      this.closeOpeningThen(() => {
+        this.setData({ activeTab: 'tonight', activeTabIndex: 0 })
+      })
+      return
+    }
+    if (action === 'launch') {
+      this.closeOpeningThen(() => {
+        const tabBar = this.getTabBar && this.getTabBar()
+        if (tabBar && tabBar.openStarfield) {
+          tabBar.openStarfield()
+        }
+      })
     }
   },
   switchTab(e) {
@@ -256,11 +437,9 @@ Page({
   },
   openLaunchDraft() {
     const tabBar = this.getTabBar && this.getTabBar()
-    if (tabBar && tabBar.toggleComposer) {
-      tabBar.toggleComposer()
-      return
+    if (tabBar && tabBar.openStarfield) {
+      tabBar.openStarfield()
     }
-    wx.navigateTo({ url: '/pages/direct-launch/index' })
   },
   openAiEntry() {
     wx.navigateTo({ url: '/pages/ai-entry/index' })

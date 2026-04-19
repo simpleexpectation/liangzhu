@@ -68,3 +68,16 @@
     <view class="detail-footer__ghost">分享话题</view>
   </view>
 </view>
+
+<view wx:if="{{showSignupConfirm}}" class="signup-confirm" bindtap="closeSignupConfirm">
+  <view class="signup-confirm__mask"></view>
+  <view class="signup-confirm__panel" catchtap="">
+    <text class="signup-confirm__title">确认报名之前</text>
+    <view class="signup-confirm__rules">
+      <text class="signup-confirm__rule">宁可少一点，也希望来的人是认真赴约的人。</text>
+      <text class="signup-confirm__rule">如果临时来不了，请尽早说明。</text>
+      <text class="signup-confirm__rule">见面时尽量少看手机，把注意力留给眼前的人。</text>
+    </view>
+    <view class="signup-confirm__action" bindtap="confirmApplyToJoin">{{isSubmitting ? '提交中...' : '确认报名'}}</view>
+  </view>
+</view>

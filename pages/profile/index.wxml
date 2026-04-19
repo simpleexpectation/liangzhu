@@ -25,44 +25,48 @@
     </view>
   </view>
 
+  <view class="profile-firelight">
+    <view class="profile-firelight__summary" bindtap="toggleFirelightHint">
+      <view class="profile-firelight__row">
+        <view wx:for="{{firelights}}" wx:key="id" class="profile-firelight__flame">
+          <image class="profile-firelight__image" mode="aspectFit" src="{{firelightIconSrc}}" />
+        </view>
+      </view>
+      <text class="profile-firelight__count">{{firelightCount}}</text>
+    </view>
+    <view wx:if="{{showFirelightHint}}" class="profile-firelight__hint">
+      每参加过一次见面，就在这里留下一点火光。
+    </view>
+  </view>
+
   <view class="event-head">
     <view>
-      <text class="event-head__eyebrow">MY IDEAS</text>
-      <text class="event-head__title">我的想法</text>
-      <text class="event-head__copy">把最近最想说的一句话留在这里，它会慢慢长成你的状态卡。</text>
+      <text class="event-head__eyebrow">MY THOUGHTS</text>
+      <text class="event-head__title">我的思考</text>
+      <text class="event-head__copy">把最近最想说的一句话留在这里，它会慢慢长成你的思考卡。</text>
     </view>
     <view class="idea-plus {{pressedIdeaAction === 'plus' ? 'idea-plus--pressed' : ''}}" data-action="plus" bindtouchstart="pressIdeaAction" bindtouchend="releaseIdeaAction" bindtouchcancel="releaseIdeaAction" bindtap="openIdeaComposer">+</view>
   </view>
 
-  <swiper class="event-swiper" current="{{ideaCurrent}}" previous-margin="36rpx" next-margin="132rpx" circular bindchange="onIdeaSwiperChange">
-    <swiper-item wx:for="{{ideaCards}}" wx:key="id">
-      <view class="event-slide">
-        <view class="event-card event-card--{{item.tone}} idea-card">
-          <view class="event-card__mist"></view>
-          <view class="event-card__body">
-            <view class="event-card__topline">
-              <text class="event-card__tag">一句状态</text>
-              <text class="event-card__date">{{item.createdAt}}</text>
-            </view>
-            <view class="event-card__bottom">
-              <text class="event-card__title">{{item.title}}</text>
-              <text class="idea-card__quote">{{item.quote}}</text>
-              <view class="event-card__footer">
-                <view class="event-card__footer-meta">
-                  <text class="event-card__foot">状态卡</text>
-                  <text class="event-card__foot">个人信息同步</text>
-                </view>
-                <text class="event-card__index">{{index + 1}} / {{ideaCards.length}}</text>
-              </view>
-            </view>
-          </view>
-        </view>
+  <view class="profile-thought-list">
+    <view
+      wx:for="{{visibleIdeaCards}}"
+      wx:key="id"
+      class="profile-thought-card profile-thought-card--{{item.tone}}"
+      data-thought-id="{{item.id}}"
+      bindtap="openIdeaDetail"
+    >
+      <text class="profile-thought-card__title">{{item.title}}</text>
+      <text class="profile-thought-card__copy">{{item.quote}}</text>
+      <view class="profile-thought-card__footer">
+        <text>{{item.createdAt}}</text>
+        <text>思考详情</text>
       </view>
-    </swiper-item>
-  </swiper>
+    </view>
+  </view>
 
-  <view class="event-dots">
-    <view wx:for="{{ideaCards}}" wx:key="id" class="event-dot {{index === ideaCurrent ? 'event-dot--active' : ''}}"></view>
+  <view wx:if="{{ideaCards.length > 3}}" class="profile-thought-expand" bindtap="toggleThoughtsExpanded">
+    {{thoughtsExpanded ? '收起' : '展开全部'}}
   </view>
 
   <view class="entry-grid">
@@ -84,30 +88,63 @@
       </view>
     </view>
   </view>
+</view>
+
 <view wx:if="{{showIdeaComposer}}" class="event-modal-mask" bindtap="closeIdeaComposer">
   <view class="event-modal-sheet" catchtap="">
-    <view class="event-modal-sheet__handle"></view>
     <view class="idea-composer">
-      <text class="idea-composer__eyebrow">Share a thought</text>
-      <text class="idea-composer__title">写下一句状态</text>
-      <text class="idea-composer__copy">完成后，它会自动出现在“我的想法”里，也会同步到个人信息的状态卡。</text>
-      <textarea
-        class="idea-composer__textarea"
-        value="{{ideaDraft}}"
-        bindinput="updateIdeaDraft"
-        maxlength="60"
-        auto-height="{{false}}"
-        show-confirm-bar="{{false}}"
-        hold-keyboard="{{true}}"
-        disable-default-padding="{{true}}"
-        placeholder="比如：我开始允许自己慢下来。"
-        placeholder-class="idea-composer__placeholder"
-      />
-      <view class="idea-composer__actions">
-        <view class="idea-composer__ghost {{pressedIdeaAction === 'cancel' ? 'idea-composer__ghost--pressed' : ''}}" data-action="cancel" bindtouchstart="pressIdeaAction" bindtouchend="releaseIdeaAction" bindtouchcancel="releaseIdeaAction" bindtap="closeIdeaComposer">先不发</view>
-        <view class="idea-composer__primary {{pressedIdeaAction === 'submit' ? 'idea-composer__primary--pressed' : ''}}" data-action="submit" bindtouchstart="pressIdeaAction" bindtouchend="releaseIdeaAction" bindtouchcancel="releaseIdeaAction" bindtap="submitIdea">变成状态卡</view>
+      <view class="thought-composer-grid thought-composer-grid--halves">
+        <view class="thought-composer-grid__panel thought-composer-grid__panel--merged-top" bindtap="focusIdeaTopic">
+          <view class="thought-composer-grid__eyebrows">
+            <text class="thought-composer-grid__eyebrow">Tonight</text>
+            <text class="thought-composer-grid__eyebrow">Liangzhu</text>
+          </view>
+          <input
+            class="thought-composer-grid__topic"
+            value="{{ideaDraft}}"
+            bindinput="updateIdeaDraft"
+            maxlength="40"
+            hold-keyboard="{{true}}"
+            focus="{{composerFocus === 'topic'}}"
+            placeholder="写一句主题"
+            placeholder-class="idea-composer__placeholder"
+          />
+        </view>
+        <view class="thought-composer-grid__panel thought-composer-grid__panel--merged-bottom" bindtap="focusIdeaBody">
+          <view class="thought-composer-grid__eyebrows">
+            <text class="thought-composer-grid__eyebrow">Meet</text>
+            <text class="thought-composer-grid__eyebrow">Topic</text>
+          </view>
+          <textarea
+            class="thought-composer-grid__body"
+            value="{{ideaBodyDraft}}"
+            bindinput="updateIdeaBodyDraft"
+            maxlength="1200"
+            auto-height="{{false}}"
+            show-confirm-bar="{{false}}"
+            hold-keyboard="{{true}}"
+            focus="{{composerFocus === 'body'}}"
+            disable-default-padding="{{true}}"
+            placeholder="把详细的思考写在这里。"
+            placeholder-class="idea-composer__placeholder"
+          />
+        </view>
       </view>
     </view>
   </view>
 </view>
+
+<view wx:if="{{showThoughtDetail}}" class="thought-modal" bindtap="closeThoughtDetail">
+  <view class="thought-modal__window {{thoughtDetailExpanded ? 'thought-modal__window--expanded' : ''}}" catchtap="">
+    <scroll-view scroll-y="{{thoughtDetailExpanded}}" class="thought-modal__scroll {{thoughtDetailExpanded ? 'thought-modal__scroll--expanded' : ''}}">
+      <view class="thought-modal__hero thought-modal__hero--{{selectedThought.tone}}">
+        <text class="thought-modal__label">THOUGHT</text>
+        <text class="thought-modal__title">{{selectedThought.title}}</text>
+      </view>
+      <view class="thought-modal__body">
+        <text class="thought-modal__text {{thoughtDetailExpanded ? 'thought-modal__text--expanded' : ''}}">{{selectedThought.detailText}}</text>
+        <view wx:if="{{selectedThought.canExpand && !thoughtDetailExpanded}}" class="thought-modal__expand" catchtap="expandThoughtDetail"></view>
+      </view>
+    </scroll-view>
+  </view>
 </view>

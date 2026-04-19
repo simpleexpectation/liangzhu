@@ -5,6 +5,7 @@ Page({
     topic: null,
     statusBarHeight: 0,
     isSubmitting: false,
+    showSignupConfirm: false,
     backendMode: 'mock',
     pageReady: false,
     pageLeaving: false
@@ -25,13 +26,22 @@ Page({
   goBack() {
     wx.navigateBack()
   },
-  async applyToJoin() {
+  applyToJoin() {
+    if (this.data.isSubmitting) return
+    this.setData({ showSignupConfirm: true })
+  },
+  closeSignupConfirm() {
+    if (this.data.isSubmitting) return
+    this.setData({ showSignupConfirm: false })
+  },
+  async confirmApplyToJoin() {
     const topicId = this.data.topic && this.data.topic.id
     if (!topicId || this.data.isSubmitting) return
     this.setData({ isSubmitting: true })
     try {
-      const result = await backend.applyToTopic(topicId)
-      wx.showToast({ title: result.message, icon: 'none' })
+      await backend.applyToTopic(topicId)
+      this.setData({ showSignupConfirm: false })
+      wx.showToast({ title: '已在火边留位', icon: 'none' })
     } finally {
       this.setData({ isSubmitting: false })
     }

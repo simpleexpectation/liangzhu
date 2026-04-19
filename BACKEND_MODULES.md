@@ -1,6 +1,6 @@
 # Simpex 后端分板块开发台账
 
-更新时间：2026-04-18
+更新时间：2026-04-20
 
 这份文档只管三件事：
 
@@ -62,6 +62,11 @@
 - 增加资料编辑
 - 增加我的事件写入
 - 支持事件可见性和发布状态
+
+补充说明：
+
+- 2026-04-20 本轮已补见面结束后的 `moment.create`
+- `pages/meet -> pages/event-detail(source=profile)` 已能走后端生成第一版沉淀
 
 ### C. 会员与邀请
 
@@ -141,6 +146,37 @@
 - 接活动结束后的 moment 沉淀
 - 接提醒和自动确认
 
+### F. 地点 / 黑洞 / 官方局动作
+
+对应页面：
+
+- `pages/blackhole`
+- `pages/venue-detail`
+- `pages/event-detail`
+
+当前状态：
+
+- 2026-04-20 已补黑洞总览读取接口
+- 2026-04-20 已补地点详情读取接口
+- 2026-04-20 已补官方局预约接口
+- 2026-04-20 已补保存思考接口
+- 2026-04-20 已补推荐空间写入接口
+- 2026-04-20 已把地点池切到“第三空间”模型，首批写入 15 个咖啡 / 见面空间
+- 2026-04-20 已移除空间里的“会员权益 / 店内福利”字段，改为 `cluster / vibe / bestFor / timePreference`
+
+当前集合：
+
+- `simpex_venue_recommendations`
+- `simpex_event_rsvps`
+- `simpex_event_pins`
+
+下一步：
+
+- 把推荐空间入口换成正式表单
+- 给官方局预约补重复预约状态和签到状态
+- 把“保存思考”与后续个人内容链路真正打通
+- 给第三空间补后台审核状态、排序策略与实地复核流程
+
 ## 2. 当前开发顺序
 
 建议固定按下面顺序推进，不要乱跳：
@@ -160,6 +196,12 @@
 - `presence.room.send`
 - `presence.conversation.decide`
 - `presence.conversation.complete`
+- `venues.detail`
+- `blackhole.overview`
+- `venues.recommend`
+- `events.rsvp`
+- `events.pin`
+- `moments.create`
 
 ## 4. 接下来建议的下一轮
 

@@ -1,5 +1,5 @@
 <view class="page-shell person-page {{pageReady ? 'page-ready' : ''}} {{pageLeaving ? 'page-leaving' : ''}}">
-  <nav-shell eyebrow="Profile" title="{{person.name}}">
+  <nav-shell eyebrow="Profile" title="个人资料">
     <view class="person-nav">
       <view class="person-nav__back" bindtap="goBack">返回</view>
     </view>
@@ -23,15 +23,36 @@
 
   <view wx:if="{{statusCards.length}}" class="person-status">
     <view class="person-status__head">
-      <text class="person-status__eyebrow">STATUS CARDS</text>
-      <text class="person-status__title">状态卡片</text>
+      <text class="person-status__eyebrow">THOUGHTS</text>
+      <text class="person-status__title">思考</text>
     </view>
     <view class="person-status__list">
-      <view wx:for="{{statusCards}}" wx:key="id" class="person-status__card person-status__card--{{item.tone}}">
+      <view
+        wx:for="{{statusCards}}"
+        wx:key="id"
+        class="person-status__card person-status__card--{{item.tone}}"
+        data-thought-id="{{item.id}}"
+        bindtap="openIdeaDetail"
+      >
         <text class="person-status__card-title">{{item.title}}</text>
         <text class="person-status__card-copy">{{item.quote}}</text>
         <text class="person-status__card-meta">{{item.createdAt}}</text>
       </view>
     </view>
+  </view>
+</view>
+
+<view wx:if="{{showThoughtDetail}}" class="thought-modal" bindtap="closeThoughtDetail">
+  <view class="thought-modal__window {{thoughtDetailExpanded ? 'thought-modal__window--expanded' : ''}}" catchtap="">
+    <scroll-view scroll-y="{{thoughtDetailExpanded}}" class="thought-modal__scroll {{thoughtDetailExpanded ? 'thought-modal__scroll--expanded' : ''}}">
+      <view class="thought-modal__hero thought-modal__hero--{{selectedThought.tone}}">
+        <text class="thought-modal__label">THOUGHT</text>
+        <text class="thought-modal__title">{{selectedThought.title}}</text>
+      </view>
+      <view class="thought-modal__body">
+        <text class="thought-modal__text {{thoughtDetailExpanded ? 'thought-modal__text--expanded' : ''}}">{{selectedThought.detailText}}</text>
+        <view wx:if="{{selectedThought.canExpand && !thoughtDetailExpanded}}" class="thought-modal__expand" catchtap="expandThoughtDetail"></view>
+      </view>
+    </scroll-view>
   </view>
 </view>

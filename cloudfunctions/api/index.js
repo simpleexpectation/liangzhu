@@ -17,7 +17,10 @@ const COLLECTIONS = {
   invites: 'simpex_invites',
   launchRequests: 'simpex_launch_requests',
   presenceConversations: 'simpex_presence_conversations',
-  presenceRooms: 'simpex_presence_rooms'
+  presenceRooms: 'simpex_presence_rooms',
+  venueRecommendations: 'simpex_venue_recommendations',
+  eventRsvps: 'simpex_event_rsvps',
+  eventPins: 'simpex_event_pins'
 }
 
 const COLLECTION_NAMES = Object.values(COLLECTIONS)
@@ -101,6 +104,18 @@ function buildInviteStatus(invite) {
   }
 }
 
+function buildBlackholeRows(items) {
+  const rows = []
+  for (let index = 0; index < items.length; index += 2) {
+    rows.push({
+      id: `row-${index / 2}`,
+      left: items[index] || null,
+      right: items[index + 1] || null
+    })
+  }
+  return rows
+}
+
 function buildLaunchTopic(payload, user) {
   const launchMode = payload.launchMode === 'offline' ? 'offline' : 'online'
   const current = 1
@@ -174,6 +189,31 @@ function buildCompletedConversation(conversation) {
     ticketReady: false,
     roomReady: false,
     schedule: `刚刚结束 · ${scheduleTail}`,
+    updatedAt: nowTimestamp()
+  }
+}
+
+function buildMomentFromConversation(conversation, user) {
+  return {
+    id: `my-event-${nowTimestamp()}`,
+    ownerId: user.id,
+    sourceConversationId: conversation.id,
+    previewEyebrow: '写此刻',
+    previewTitle: conversation.title,
+    previewText: '这一场刚刚结束，但它留下来的感觉还在。',
+    kindLabel: '一句话',
+    title: conversation.title,
+    venue: conversation.venue,
+    date: new Date().toISOString().slice(5, 10).replace('-', '/'),
+    heroTone: String(nowTimestamp() % 5),
+    anchor: '写此刻',
+    body: `今晚在 ${conversation.venue} 的这场见面刚刚结束。真正被留下来的不是结论，而是我终于愿意把一些原本不会说出来的话慢慢说完整。`,
+    summary: '这是一次见面之后自动生成的第一版沉淀。',
+    identityLens: '它会让后来的自己记得，这次相遇里你是怎样在场的。',
+    innerQuestion: '如果下一次还会见面，我最想继续聊下去的那一部分是什么？',
+    graphTag: '在场感',
+    footnote: '来自一场刚刚结束的见面',
+    createdAt: nowTimestamp(),
     updatedAt: nowTimestamp()
   }
 }
@@ -419,6 +459,67 @@ async function peopleDetail(id) {
   }
 }
 
+async function venueDetail(id) {
+  const [venue, topics, people] = await Promise.all([
+    readOneWhere(COLLECTIONS.venues, { id }),
+    readAll(COLLECTIONS.topics),
+    readAll(COLLECTIONS.people)
+  ])
+
+  if (!venue) return { ok: false, message: 'Venue not found.' }
+
+  const peopleById = groupByKey(people)
+  const venueTopics = topics
+    .filter((item) => item.venueId === venue.id)
+    .sort((left, right) => new Date(left.dateKey).getTime() - new Date(right.dateKey).getTime())
+    .map((item) => toTopicCard(item, peopleById))
+
+  return {
+    ok: true,
+    data: {
+      venue,
+      venueTopics,
+      venueTodayMood: `今天${venue.mood}`
+    }
+  }
+}
+
+async function blackholeOverview() {
+  const venues = await readAll(COLLECTIONS.venues)
+  return {
+    ok: true,
+    data: {
+      venues,
+      goodPeople: seed.blackholePeople,
+      goodPeopleRows: buildBlackholeRows(seed.blackholePeople)
+    }
+  }
+}
+
+async function venueRecommend(payload, openid) {
+  const user = await ensureUser(openid)
+  await safeGetCollection(COLLECTIONS.venueRecommendations).add({
+    data: {
+      id: `venue-rec-${nowTimestamp()}`,
+      userId: user.id,
+      openid,
+      venueName: payload.venueName || '',
+      note: payload.note || '',
+      status: 'pending_review',
+      createdAt: nowTimestamp(),
+      updatedAt: nowTimestamp()
+    }
+  })
+
+  return {
+    ok: true,
+    data: {
+      ok: true,
+      message: '已收到你的空间推荐，审核后会进入正式空间列表'
+    }
+  }
+}
+
 async function membershipOverview(openid) {
   const user = await ensureUser(openid)
   const membership = await ensureMembership(user)
@@ -435,6 +536,83 @@ async function inviteStatus(openid) {
   return {
     ok: true,
     data: buildInviteStatus(invite)
+  }
+}
+
+async function eventRsvp(id, source, openid) {
+  const user = await ensureUser(openid)
+  const existing = await readOneWhere(COLLECTIONS.eventRsvps, {
+    eventId: id,
+    userId: user.id
+  })
+
+  if (existing) {
+    return {
+      ok: true,
+      data: {
+        ok: true,
+        message: '你已经预约过这场见面了'
+      }
+    }
+  }
+
+  await safeGetCollection(COLLECTIONS.eventRsvps).add({
+    data: {
+      id: `event-rsvp-${nowTimestamp()}`,
+      eventId: id,
+      source: source || 'official',
+      userId: user.id,
+      openid,
+      status: 'reserved',
+      createdAt: nowTimestamp(),
+      updatedAt: nowTimestamp()
+    }
+  })
+
+  return {
+    ok: true,
+    data: {
+      ok: true,
+      message: '预约成功'
+    }
+  }
+}
+
+async function eventPin(id, source, openid) {
+  const user = await ensureUser(openid)
+  const existing = await readOneWhere(COLLECTIONS.eventPins, {
+    eventId: id,
+    userId: user.id
+  })
+
+  if (existing) {
+    return {
+      ok: true,
+      data: {
+        ok: true,
+        message: '这条内容已经保存过了'
+      }
+    }
+  }
+
+  await safeGetCollection(COLLECTIONS.eventPins).add({
+    data: {
+      id: `event-pin-${nowTimestamp()}`,
+      eventId: id,
+      source: source || 'official',
+      userId: user.id,
+      openid,
+      createdAt: nowTimestamp(),
+      updatedAt: nowTimestamp()
+    }
+  })
+
+  return {
+    ok: true,
+    data: {
+      ok: true,
+      message: '已保存思考'
+    }
   }
 }
 
@@ -578,6 +756,41 @@ async function presenceConversationComplete(id) {
   }
 }
 
+async function momentCreate(conversationId, openid) {
+  const user = await ensureUser(openid)
+  const conversation = await readOneWhere(COLLECTIONS.presenceConversations, { id: conversationId })
+  if (!conversation) {
+    return { ok: false, message: 'Conversation not found.' }
+  }
+
+  const existing = await readOneWhere(COLLECTIONS.profileEvents, {
+    sourceConversationId: conversationId,
+    ownerId: user.id
+  })
+  if (existing) {
+    return {
+      ok: true,
+      data: {
+        ok: true,
+        message: '这场见面的沉淀已经生成过了',
+        event: existing
+      }
+    }
+  }
+
+  const event = buildMomentFromConversation(conversation, user)
+  await safeGetCollection(COLLECTIONS.profileEvents).add({ data: event })
+
+  return {
+    ok: true,
+    data: {
+      ok: true,
+      message: '已生成一条见后沉淀',
+      event
+    }
+  }
+}
+
 exports.main = async (event = {}) => {
   const {
     action,
@@ -591,7 +804,9 @@ exports.main = async (event = {}) => {
     time,
     venue,
     platform,
-    joinHint
+    joinHint,
+    note,
+    venueName
   } = event
   const wxContext = cloud.getWXContext()
   const openid = wxContext.OPENID || 'local-openid'
@@ -613,10 +828,20 @@ exports.main = async (event = {}) => {
       return eventDetail(id, source)
     case 'people.detail':
       return peopleDetail(id)
+    case 'venues.detail':
+      return venueDetail(id)
+    case 'blackhole.overview':
+      return blackholeOverview()
+    case 'venues.recommend':
+      return venueRecommend({ venueName, note }, openid)
     case 'membership.overview':
       return membershipOverview(openid)
     case 'invite.status':
       return inviteStatus(openid)
+    case 'events.rsvp':
+      return eventRsvp(id, source, openid)
+    case 'events.pin':
+      return eventPin(id, source, openid)
     case 'launch.create':
       return launchCreate({
         source,
@@ -638,6 +863,8 @@ exports.main = async (event = {}) => {
       return presenceConversationDecide(id, decision)
     case 'presence.conversation.complete':
       return presenceConversationComplete(id)
+    case 'moments.create':
+      return momentCreate(id, openid)
     default:
       return {
         ok: false,

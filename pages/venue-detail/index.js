@@ -1,26 +1,24 @@
-const { topics, venues } = require('../../data/mock')
-
-const sortTopics = (list) => [...list].sort((a, b) => new Date(a.dateKey).getTime() - new Date(b.dateKey).getTime())
+const backend = require('../../lib/backend/index')
 
 Page({
   data: {
-    venue: venues[0],
+    venue: null,
     venueTopics: [],
     venueTodayMood: '',
     statusBarHeight: 44,
+    backendMode: 'mock',
     pageReady: false,
     pageLeaving: false
   },
-  onLoad(query) {
-    const venue = venues.find((item) => item.id === query.id) || venues[0]
-    const venueTopics = sortTopics(topics.filter((item) => item.venueId === venue.id))
-    const venueTodayMood = `今天${venue.mood}`
+  async onLoad(query) {
     const systemInfo = wx.getSystemInfoSync()
+    const result = await backend.fetchVenueDetail(query.id)
     this.setData({
-      venue,
-      venueTopics,
-      venueTodayMood,
-      statusBarHeight: systemInfo.statusBarHeight || 44
+      venue: result.venue,
+      venueTopics: result.venueTopics,
+      venueTodayMood: result.venueTodayMood,
+      statusBarHeight: systemInfo.statusBarHeight || 44,
+      backendMode: result.mode
     })
   },
   onShow() {

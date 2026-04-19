@@ -35,6 +35,9 @@
    - `simpex_launch_requests`
    - `simpex_presence_conversations`
    - `simpex_presence_rooms`
+   - `simpex_venue_recommendations`
+   - `simpex_event_rsvps`
+   - `simpex_event_pins`
 5. 右键部署云函数 `cloudfunctions/api`
 
 ## 首次运行会发生什么

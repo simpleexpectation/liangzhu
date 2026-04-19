@@ -1,12 +1,12 @@
 const backend = require('../../lib/backend/index') as typeof import('../../lib/backend/index')
 
 const venueOptions = [
-  { key: 'changkai', name: '敞开酒馆', mood: '适合慢下来认真聊', slot: '晚间可发起' },
-  { key: 'boguang', name: '泊光集', mood: '适合复盘与余味', slot: '夜晚更合适' },
-  { key: 'cat', name: '猫客厅', mood: '适合轻松破冰', slot: '傍晚到晚间' },
-  { key: 'kuangye', name: '旷野公社', mood: '适合新想法碰撞', slot: '白天也能开始' },
-  { key: 'haofeng', name: '好逢小屋', mood: '适合熟人感与温度', slot: '周末更自然' },
-  { key: 'banana', name: '香蕉小院', mood: '适合松弛表达', slot: '下午到黄昏' }
+  { key: 'xinglab', name: '醒Lab', mood: '适合从散步或展览切进慢聊', slot: '白天到傍晚' },
+  { key: 'starbucks', name: '星巴克', mood: '最稳妥的第一次见面入口', slot: '全天都好约' },
+  { key: 'wufei', name: '无非coffee', mood: '社区感更强，适合熟一点的人', slot: '下午更自然' },
+  { key: 'manner', name: 'Manner Coffee', mood: '适合快速碰头', slot: '全天都能开始' },
+  { key: 'villager', name: '村民咖啡', mood: '适合散步后继续聊', slot: '下午到傍晚' },
+  { key: 'hangyimo', name: '杭一末', mood: '适合朋友带朋友的小范围见面', slot: '下午更合适' }
 ]
 
 const launchModes = [

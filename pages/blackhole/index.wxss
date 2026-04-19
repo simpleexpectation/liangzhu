@@ -25,6 +25,7 @@
   border-radius: 50%;
   pointer-events: none;
   filter: blur(20rpx);
+  transform: translate3d(0, 0, 0);
 }
 
 .presence-shell__glow--a {
@@ -32,7 +33,8 @@
   right: 24rpx;
   width: 240rpx;
   height: 240rpx;
-  background: radial-gradient(circle, rgba(244, 232, 132, 0.32), rgba(244, 232, 132, 0));
+  background: radial-gradient(circle, rgba(244, 232, 132, 0.46), rgba(244, 232, 132, 0));
+  animation: presenceGlowFloatA 22s ease-in-out infinite alternate;
 }
 
 .presence-shell__glow--b {
@@ -40,7 +42,8 @@
   left: -40rpx;
   width: 420rpx;
   height: 420rpx;
-  background: radial-gradient(circle, rgba(232, 169, 143, 0.14), rgba(232, 169, 143, 0));
+  background: radial-gradient(circle, rgba(232, 169, 143, 0.24), rgba(232, 169, 143, 0));
+  animation: presenceGlowFloatB 28s ease-in-out infinite alternate;
 }
 
 .presence-before {
@@ -65,11 +68,7 @@
 }
 
 .presence-section-scroll--single {
-  margin-top: 8rpx;
-}
-
-.presence-top-offset {
-  width: 100%;
+  margin-top: 18rpx;
 }
 
 .presence-subtabs {
@@ -182,9 +181,27 @@
   overflow: hidden;
   min-height: 650rpx;
   border-radius: 58rpx;
+  background: linear-gradient(180deg, #d6a18d 0%, #d8a38d 100%);
   box-shadow:
     0 30rpx 90rpx rgba(0, 0, 0, 0.28),
     inset 0 0 0 1rpx rgba(255, 255, 255, 0.06);
+}
+
+.venue-stage__image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.venue-stage__shade {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(35, 29, 27, 0.08) 0%, rgba(35, 29, 27, 0.18) 32%, rgba(10, 9, 9, 0.52) 100%);
 }
 
 .venue-stage__card--0 {
@@ -221,13 +238,13 @@
   z-index: 2;
   padding: 28rpx 28rpx 30rpx;
   border-radius: 34rpx;
-  background: linear-gradient(180deg, rgba(19, 16, 15, 0.08), rgba(19, 16, 15, 0.18));
-  backdrop-filter: blur(18rpx);
+  background: linear-gradient(180deg, rgba(18, 15, 14, 0.12), rgba(18, 15, 14, 0.26));
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.08);
 }
 
 .venue-stage__eyebrow {
   display: block;
-  color: rgba(23, 19, 18, 0.48);
+  color: rgba(255, 246, 238, 0.72);
   font-size: 22rpx;
   letter-spacing: 1rpx;
 }
@@ -235,16 +252,17 @@
 .venue-stage__title {
   display: block;
   margin-top: 14rpx;
-  color: #171312;
+  color: #fff8f0;
   font-size: 58rpx;
   line-height: 1.02;
   font-weight: 600;
+  text-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.2);
 }
 
 .venue-stage__copy {
   display: block;
   margin-top: 14rpx;
-  color: rgba(23, 19, 18, 0.66);
+  color: rgba(255, 246, 238, 0.82);
   font-size: 24rpx;
   line-height: 1.5;
 }
@@ -259,9 +277,10 @@
 .venue-stage__meta-pill {
   padding: 10rpx 18rpx;
   border-radius: 999rpx;
-  background: rgba(17, 14, 13, 0.14);
-  color: rgba(23, 19, 18, 0.74);
+  background: rgba(17, 14, 13, 0.22);
+  color: rgba(255, 247, 239, 0.92);
   font-size: 22rpx;
+  box-shadow: inset 0 0 0 1rpx rgba(255, 255, 255, 0.06);
 }
 
 .venue-recommend-entry {
@@ -385,19 +404,19 @@
 }
 
 .meet-person-card--left.meet-person-card--offset-0 {
-  transform: translateY(0) rotate(-0.8deg);
+  transform: none;
 }
 
 .meet-person-card--right.meet-person-card--offset-1 {
-  transform: translateY(16rpx) rotate(0.7deg);
+  transform: none;
 }
 
 .meet-person-card--left.meet-person-card--offset-2 {
-  transform: translateY(-6rpx) rotate(0.4deg);
+  transform: none;
 }
 
 .meet-person-card--right.meet-person-card--offset-3 {
-  transform: translateY(10rpx) rotate(-0.5deg);
+  transform: none;
 }
 
 .meet-person-card--mist {
@@ -2470,4 +2489,34 @@
   background: rgba(255, 255, 255, 0.08);
   color: rgba(243, 241, 231, 0.78);
   font-size: 22rpx;
+}
+
+@keyframes presenceGlowFloatA {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.86;
+  }
+  50% {
+    transform: translate3d(-48rpx, 34rpx, 0) scale(1.14);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(28rpx, 70rpx, 0) scale(1.06);
+    opacity: 0.9;
+  }
+}
+
+@keyframes presenceGlowFloatB {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.7;
+  }
+  52% {
+    transform: translate3d(58rpx, -28rpx, 0) scale(1.1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(-38rpx, -54rpx, 0) scale(1.05);
+    opacity: 0.74;
+  }
 }
